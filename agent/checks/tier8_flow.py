@@ -2,6 +2,7 @@
 
 import json
 import os
+import sys
 
 from groq import Groq
 
@@ -46,11 +47,18 @@ def check_flow_consistency(page_states: list[dict], metrics: RunMetrics | None =
     model = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b")
     prompt = PROMPT_TEMPLATE.format(sequence_json=json.dumps(page_states, indent=2))
 
-    response = client.chat.completions.create(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0,
-    )
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+        )
+    except Exception as exc:
+        # Same principle as tier 7: a Groq failure here must not discard everything
+        # already recorded for this run.
+        print(f"tier8: Groq call failed, skipping: {exc}", file=sys.stderr)
+        return []
+
     if metrics is not None:
         usage = getattr(response, "usage", None)
         tokens = getattr(usage, "total_tokens", 0) or 0

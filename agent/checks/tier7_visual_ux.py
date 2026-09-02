@@ -2,6 +2,7 @@
 
 import json
 import os
+import sys
 import time
 
 from google import genai
@@ -41,8 +42,8 @@ def judge_screenshot(
     if client is None:
         return []
 
-    last_error: Exception | None = None
     issues = []
+    succeeded = False
     for attempt in range(_MAX_RETRIES):
         try:
             response = client.models.generate_content(
@@ -60,12 +61,21 @@ def judge_screenshot(
             if text.startswith("```"):
                 text = text.strip("`").removeprefix("json").strip()
             issues = json.loads(text)
+            succeeded = True
             break
         except Exception as exc:  # retry/backoff on rate limits or transient failures
-            last_error = exc
+            # A per-day quota (as opposed to a per-minute rate limit) won't recover within
+            # this run — retrying just burns the run's time budget for nothing.
+            if "PerDay" in str(exc):
+                print(f"tier7: Gemini daily quota exhausted, skipping: {exc}", file=sys.stderr)
+                break
+            print(f"tier7: Gemini call failed (attempt {attempt + 1}/{_MAX_RETRIES}): {exc}", file=sys.stderr)
             time.sleep(2**attempt)
-    else:
-        raise RuntimeError(f"Gemini vision call failed after {_MAX_RETRIES} attempts") from last_error
+
+    if not succeeded:
+        # One failed vision call must not discard the deterministic tier 1-6 findings
+        # already recorded for this run -- degrade this tier, don't crash the scan.
+        return []
 
     findings: list[Finding] = []
     for issue in issues:

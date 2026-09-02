@@ -6,6 +6,7 @@ viewport checks after each action, and hands the recorded state sequence to tier
 
 import json
 import os
+import sys
 from typing import Any, TypedDict
 
 from groq import Groq
@@ -77,18 +78,24 @@ def plan_actions(state: ExplorerState) -> ExplorerState:
     dom_summary = _dom_summary(page)
     model = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b")
 
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {
-                "role": "user",
-                "content": PLAN_PROMPT.format(
-                    dom_summary=dom_summary, tried=", ".join(state["tried_selectors"]) or "none"
-                ),
-            }
-        ],
-        temperature=0,
-    )
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {
+                    "role": "user",
+                    "content": PLAN_PROMPT.format(
+                        dom_summary=dom_summary, tried=", ".join(state["tried_selectors"]) or "none"
+                    ),
+                }
+            ],
+            temperature=0,
+        )
+    except Exception as exc:
+        # A Groq failure here must not crash the whole run -- just stop exploring.
+        print(f"plan_actions: Groq call failed, ending explore loop: {exc}", file=sys.stderr)
+        return {**state, "planned_action": {"action": "none"}, "done": True}
+
     usage = getattr(response, "usage", None)
     state["metrics"].record_groq(getattr(usage, "total_tokens", 0) or 0)
     text = response.choices[0].message.content.strip()
