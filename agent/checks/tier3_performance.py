@@ -4,6 +4,7 @@ from playwright.sync_api import Page
 
 from crawler import PageLoadResult
 from findings import Finding
+from inject import inject_script
 
 WEB_VITALS_CDN_URL = "https://cdnjs.cloudflare.com/ajax/libs/web-vitals/4.2.4/web-vitals.iife.js"
 
@@ -13,7 +14,7 @@ SLOW_RESPONSE_THRESHOLD_MS = 1500
 
 
 def measure_web_vitals(page: Page) -> dict:
-    page.add_script_tag(url=WEB_VITALS_CDN_URL)
+    inject_script(page, WEB_VITALS_CDN_URL)
     return page.evaluate(
         """
         () => new Promise((resolve) => {

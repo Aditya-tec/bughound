@@ -3,6 +3,7 @@
 from playwright.sync_api import Page
 
 from findings import Finding
+from inject import inject_script
 
 AXE_CDN_URL = "https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.2/axe.min.js"
 
@@ -15,7 +16,7 @@ IMPACT_TO_SEVERITY = {
 
 
 def check_accessibility(page: Page, page_url: str) -> list[Finding]:
-    page.add_script_tag(url=AXE_CDN_URL)
+    inject_script(page, AXE_CDN_URL)
     results = page.evaluate("async () => await axe.run()")
 
     findings: list[Finding] = []
