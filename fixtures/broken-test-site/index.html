@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <!-- Tier 4: no meta description, no canonical, no OG tags -->
+  <title>Broken Test Page</title>
+  <!-- Tier 6: no viewport meta tag -->
+</head>
+<body>
+  <!-- Tier 4: duplicate H1 -->
+  <h1>Welcome</h1>
+  <h1>Welcome Again</h1>
+
+  <!-- Tier 2: missing alt text, low contrast -->
+  <img src="/does-not-exist.png" />
+  <p style="color:#ddd;background:#fff;">Barely visible text (low contrast)</p>
+
+  <!-- Tier 1: broken image, broken internal link -->
+  <img src="/also-missing.jpg" alt="broken" />
+  <a href="/nowhere-page">Broken link</a>
+  <a href="https://this-domain-does-not-exist-bughound.example/">Broken external link</a>
+
+  <!-- Tier 7: leftover placeholder content, misleading CTA -->
+  <p>Lorem ipsum dolor sit amet, TODO: replace this section.</p>
+  <button onclick="void(0)">Get it FREE — no strings attached!</button>
+
+  <!-- Tier 6: sub-44px touch target, wide element causing horizontal overflow -->
+  <button style="width:20px;height:20px;padding:0;">x</button>
+  <div style="width:2000px;height:10px;background:#eee;"></div>
+
+  <!-- Tier 1/2: form with required field, no visible validation UI, missing label -->
+  <form novalidate onsubmit="event.preventDefault();">
+    <input type="email" required placeholder="email" />
+    <button type="submit">Sign up</button>
+  </form>
+
+  <!-- Tier 8: link to a second step that loses query-string state -->
+  <a href="/step2.html">Continue to step 2</a>
+
+  <script>
+    // Tier 1: uncaught JS exception
+    undefinedFunctionCausesConsoleError();
+  </script>
+  <script>
+    // Tier 1: failed network request
+    fetch("/api/does-not-exist").catch(() => {});
+  </script>
+</body>
+</html>
