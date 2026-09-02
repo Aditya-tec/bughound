@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query
 
-from supabase_client import get_supabase
+from api.supabase_client import get_supabase
 
 router = APIRouter(prefix="/api/github", tags=["github_app"])
 

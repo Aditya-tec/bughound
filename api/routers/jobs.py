@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 
-from github_dispatch import fire_run_scan
-from models.job import CreateJobRequest, CreateJobResponse
-from supabase_client import get_supabase
+from api.github_dispatch import fire_run_scan
+from api.models.job import CreateJobRequest, CreateJobResponse
+from api.supabase_client import get_supabase
 
 router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 

@@ -3,9 +3,9 @@ import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from github_app_auth import get_installation_token
-from github_issue_filer import file_issue
-from supabase_client import get_supabase
+from api.github_app_auth import get_installation_token
+from api.github_issue_filer import file_issue
+from api.supabase_client import get_supabase
 
 router = APIRouter(prefix="/api/jobs", tags=["issues"])
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from routers import github_app, issues, jobs
+from api.routers import github_app, issues, jobs
 
 app = FastAPI(title="BugHound API")
 
