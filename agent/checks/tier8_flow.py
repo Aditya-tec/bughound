@@ -6,6 +6,7 @@ import os
 from groq import Groq
 
 from findings import Finding
+from metrics import RunMetrics
 
 PROMPT_TEMPLATE = """You are a QA engineer reviewing a recorded sequence of page states from a
 multi-step user flow (e.g. signup, checkout, pagination) on the same site.
@@ -29,7 +30,7 @@ def _get_client() -> Groq | None:
     return Groq(api_key=api_key)
 
 
-def check_flow_consistency(page_states: list[dict]) -> list[Finding]:
+def check_flow_consistency(page_states: list[dict], metrics: RunMetrics | None = None) -> list[Finding]:
     """`page_states` is a list of {step, url, action, summary} dicts recorded during the run.
 
     No-ops (returns []) without GROQ_API_KEY or with fewer than 2 recorded steps — flow
@@ -50,6 +51,10 @@ def check_flow_consistency(page_states: list[dict]) -> list[Finding]:
         messages=[{"role": "user", "content": prompt}],
         temperature=0,
     )
+    if metrics is not None:
+        usage = getattr(response, "usage", None)
+        tokens = getattr(usage, "total_tokens", 0) or 0
+        metrics.record_groq(tokens)
     text = response.choices[0].message.content.strip()
     if text.startswith("```"):
         text = text.strip("`").removeprefix("json").strip()

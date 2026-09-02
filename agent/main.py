@@ -23,6 +23,7 @@ from guardrails import (
     RunClock,
     RunTimedOut,
 )
+from metrics import RunMetrics
 from supabase_client import get_supabase, record_finding, record_run_meta, update_job
 
 RUN_TIMEOUT_SECONDS = 300
@@ -86,6 +87,7 @@ def main() -> int:
     rate_limiter = RateLimiter()
     action_budget = ActionBudget(ACTION_BUDGET)
     robots = RobotsChecker(target_url)
+    metrics = RunMetrics()
 
     all_findings_with_ids: list[tuple[str, Finding]] = []
     page_states: list[dict] = []
@@ -119,12 +121,12 @@ def main() -> int:
                 all_findings_with_ids.append((row.get("id"), finding))
 
             clock.assert_not_expired()
-            page_states = run_exploration(job_id, page, action_budget)
+            page_states = run_exploration(job_id, page, action_budget, metrics)
 
             update_job(job_id, pages_crawled=pages_crawled, actions_taken=action_budget.actions_taken)
 
             clock.assert_not_expired()
-            flow_findings = tier8_flow.check_flow_consistency(page_states)
+            flow_findings = tier8_flow.check_flow_consistency(page_states, metrics)
             for finding in flow_findings:
                 row = record_finding(job_id, finding)
                 all_findings_with_ids.append((row.get("id"), finding))
@@ -152,7 +154,12 @@ def main() -> int:
             pages_crawled=pages_crawled,
             actions_taken=action_budget.actions_taken,
         )
-        record_run_meta(job_id, duration_seconds=duration)
+        record_run_meta(
+            job_id,
+            duration_seconds=duration,
+            gemini_calls=metrics.gemini_calls,
+            tokens_used=metrics.tokens_used,
+        )
 
     return 0 if status == "completed" else 1
 

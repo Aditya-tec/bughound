@@ -15,7 +15,8 @@ from playwright.sync_api import Page
 from checks import tier2_accessibility, tier6_responsive, tier7_visual_ux
 from findings import Finding
 from guardrails import ActionBudget
-from supabase_client import record_finding
+from metrics import RunMetrics
+from supabase_client import record_finding, upload_screenshot
 
 PLAN_PROMPT = """You are exploring a web page to find testable interactive elements.
 Given this simplified list of interactive elements, pick ONE next action to try that you
@@ -35,6 +36,7 @@ class ExplorerState(TypedDict):
     job_id: str
     page: Any  # playwright.sync_api.Page
     action_budget: ActionBudget
+    metrics: RunMetrics
     tried_selectors: list[str]
     planned_action: dict
     page_states: list[dict]
@@ -86,6 +88,8 @@ def plan_actions(state: ExplorerState) -> ExplorerState:
         ],
         temperature=0,
     )
+    usage = getattr(response, "usage", None)
+    state["metrics"].record_groq(getattr(usage, "total_tokens", 0) or 0)
     text = response.choices[0].message.content.strip()
     if text.startswith("```"):
         text = text.strip("`").removeprefix("json").strip()
@@ -146,7 +150,13 @@ def judge_findings(state: ExplorerState) -> ExplorerState:
     if os.environ.get("GEMINI_API_KEY"):
         page = state["page"]
         screenshot = page.screenshot()
-        findings = tier7_visual_ux.judge_screenshot(screenshot, page.url)
+        try:
+            screenshot_url = upload_screenshot(state["job_id"], screenshot)
+        except Exception:
+            screenshot_url = None
+        findings = tier7_visual_ux.judge_screenshot(
+            screenshot, page.url, screenshot_url=screenshot_url, metrics=state["metrics"]
+        )
         for finding in findings:
             record_finding(state["job_id"], finding)
     return state
@@ -176,7 +186,9 @@ def build_graph():
     return graph.compile()
 
 
-def run_exploration(job_id: str, page: Page, action_budget: ActionBudget) -> list[dict]:
+def run_exploration(
+    job_id: str, page: Page, action_budget: ActionBudget, metrics: RunMetrics
+) -> list[dict]:
     """Runs the explore loop to completion and returns the recorded page-state sequence
     (input to tier 8, run separately in main.py once all pages have been explored)."""
     app = build_graph()
@@ -184,6 +196,7 @@ def run_exploration(job_id: str, page: Page, action_budget: ActionBudget) -> lis
         "job_id": job_id,
         "page": page,
         "action_budget": action_budget,
+        "metrics": metrics,
         "tried_selectors": [],
         "planned_action": {},
         "page_states": [],

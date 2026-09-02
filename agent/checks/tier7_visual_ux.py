@@ -8,6 +8,7 @@ from google import genai
 from google.genai import types
 
 from findings import Finding
+from metrics import RunMetrics
 
 PROMPT = """You are a QA engineer reviewing a screenshot of a live web page for bugs.
 Look for: layout breakage, silent form-submit failures, dead-end navigation,
@@ -29,7 +30,12 @@ def _get_client() -> genai.Client | None:
     return genai.Client(api_key=api_key)
 
 
-def judge_screenshot(screenshot_bytes: bytes, page_url: str) -> list[Finding]:
+def judge_screenshot(
+    screenshot_bytes: bytes,
+    page_url: str,
+    screenshot_url: str | None = None,
+    metrics: RunMetrics | None = None,
+) -> list[Finding]:
     """Sends a screenshot to Gemini for tier 7 visual/UX judgment. No-ops without GEMINI_API_KEY."""
     client = _get_client()
     if client is None:
@@ -46,6 +52,10 @@ def judge_screenshot(screenshot_bytes: bytes, page_url: str) -> list[Finding]:
                     types.Part.from_bytes(data=screenshot_bytes, mime_type="image/png"),
                 ],
             )
+            if metrics is not None:
+                usage = getattr(response, "usage_metadata", None)
+                tokens = getattr(usage, "total_token_count", 0) or 0
+                metrics.record_gemini(tokens)
             text = (response.text or "").strip()
             if text.startswith("```"):
                 text = text.strip("`").removeprefix("json").strip()
@@ -68,6 +78,7 @@ def judge_screenshot(screenshot_bytes: bytes, page_url: str) -> list[Finding]:
                 title=issue.get("title", "Visual/UX issue"),
                 description=issue.get("description", ""),
                 repro_steps=f"Load {page_url} and compare against the captured screenshot.",
+                screenshot_url=screenshot_url,
             )
         )
     return findings
