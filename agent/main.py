@@ -27,7 +27,10 @@ from metrics import RunMetrics
 from supabase_client import get_supabase, record_finding, record_run_meta, update_job
 
 RUN_TIMEOUT_SECONDS = 300
-ACTION_BUDGET = 15
+# 15 (the spec's example figure) is too many for real Groq+Gemini latency per iteration --
+# a live run against example.com averaged ~25s/action and blew through the 300s timeout.
+# 8 leaves headroom for the tier 1-6 pass plus tier 8 after the loop.
+ACTION_BUDGET = 8
 
 
 def parse_args() -> argparse.Namespace:
@@ -121,7 +124,7 @@ def main() -> int:
                 all_findings_with_ids.append((row.get("id"), finding))
 
             clock.assert_not_expired()
-            page_states = run_exploration(job_id, page, action_budget, metrics)
+            page_states = run_exploration(job_id, page, action_budget, metrics, allowlist)
 
             update_job(job_id, pages_crawled=pages_crawled, actions_taken=action_budget.actions_taken)
 

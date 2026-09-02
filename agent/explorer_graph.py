@@ -14,7 +14,7 @@ from playwright.sync_api import Page
 
 from checks import tier2_accessibility, tier6_responsive, tier7_visual_ux
 from findings import Finding
-from guardrails import ActionBudget
+from guardrails import ActionBudget, DomainAllowlist
 from metrics import RunMetrics
 from supabase_client import record_finding, upload_screenshot
 
@@ -37,6 +37,7 @@ class ExplorerState(TypedDict):
     page: Any  # playwright.sync_api.Page
     action_budget: ActionBudget
     metrics: RunMetrics
+    allowlist: DomainAllowlist
     tried_selectors: list[str]
     planned_action: dict
     page_states: list[dict]
@@ -109,6 +110,7 @@ def execute_action(state: ExplorerState) -> ExplorerState:
     page = state["page"]
     selector = action.get("selector")
     tried = [*state["tried_selectors"]]
+    before_url = page.url
 
     if selector:
         tried.append(selector)
@@ -120,6 +122,16 @@ def execute_action(state: ExplorerState) -> ExplorerState:
                 page.locator(selector).first.fill("test@example.com")
         except Exception:
             pass  # element not actionable — still counts against the budget below
+
+        # Domain allowlist applies to agent-driven navigation too (spec section 12): a click
+        # can land on an external link Groq picked from the DOM summary. Never explore off-domain.
+        if not state["allowlist"].is_internal(page.url):
+            try:
+                page.go_back(wait_until="networkidle", timeout=5000)
+            except Exception:
+                pass
+            if not state["allowlist"].is_internal(page.url):
+                page.goto(before_url, wait_until="networkidle")
 
     state["action_budget"].consume()
     return {**state, "tried_selectors": tried}
@@ -187,7 +199,11 @@ def build_graph():
 
 
 def run_exploration(
-    job_id: str, page: Page, action_budget: ActionBudget, metrics: RunMetrics
+    job_id: str,
+    page: Page,
+    action_budget: ActionBudget,
+    metrics: RunMetrics,
+    allowlist: DomainAllowlist,
 ) -> list[dict]:
     """Runs the explore loop to completion and returns the recorded page-state sequence
     (input to tier 8, run separately in main.py once all pages have been explored)."""
@@ -197,6 +213,7 @@ def run_exploration(
         "page": page,
         "action_budget": action_budget,
         "metrics": metrics,
+        "allowlist": allowlist,
         "tried_selectors": [],
         "planned_action": {},
         "page_states": [],
