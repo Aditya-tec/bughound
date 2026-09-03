@@ -6,7 +6,7 @@ export default function Tier2AccessibilityFixture() {
       <h1>Tier 2 — Accessibility fixture</h1>
 
       {/* Missing alt text */}
-      <img src="/favicon.ico" width={64} height={64} />
+      <img src="/logo-128.png" width={64} height={64} />
 
       {/* Insufficient contrast: light gray on white */}
       <p style={{ color: "#e0e0e0", background: "#ffffff" }}>

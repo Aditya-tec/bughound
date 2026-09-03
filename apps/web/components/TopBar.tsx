@@ -1,10 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function TopBar() {
   return (
     <div className="topbar">
       <Link href="/" className="brand">
-        <span className="brand-mark">BH</span>
+        <Image src="/logo-128.png" alt="" width={30} height={30} className="brand-mark" priority />
         BugHound
       </Link>
       <nav className="topbar-nav">
