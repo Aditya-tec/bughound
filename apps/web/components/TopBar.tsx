@@ -8,8 +8,8 @@ export default function TopBar() {
         BugHound
       </Link>
       <div className="topbar-links">
-        <a href="https://github.com/Aditya-tec/bughound" target="_blank" rel="noreferrer">
-          GitHub
+        <a href="https://github.com/Aditya-tec/bughound" target="_blank" rel="noreferrer" className="ghost-btn">
+          GitHub ↗
         </a>
       </div>
     </div>

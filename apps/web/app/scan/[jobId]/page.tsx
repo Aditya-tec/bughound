@@ -71,7 +71,7 @@ export default function ScanPage({ params }: { params: Promise<{ jobId: string }
 
       {job.status === "completed" && (
         <p className="muted" style={{ marginTop: "0.9rem" }}>
-          Done — <a href={`/reports/${job.id}`} style={{ color: "var(--accent)", fontWeight: 600 }}>view the shareable report ↗</a>
+          Done — <a href={`/reports/${job.id}`} style={{ color: "var(--iris)", fontWeight: 600 }}>view the shareable report ↗</a>
         </p>
       )}
       {job.status === "failed" && (

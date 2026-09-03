@@ -28,26 +28,31 @@ export default function HomePage() {
 
   return (
     <main className="hero">
-      <h1 style={{ fontSize: "clamp(2.2rem, 5vw, 3.2rem)", fontWeight: 800 }}>
-        Find the bugs
-        <br />
-        <span className="highlight-box">before your users do.</span>
+      <span className="pill-chip-label">Autonomous QA agent</span>
+
+      <h1 style={{ fontSize: "clamp(2.2rem, 5vw, 3.6rem)", maxWidth: "16ch", margin: "1.25rem auto 0" }}>
+        Every product has bugs it <span className="serif-italic">doesn&apos;t</span> know about.
       </h1>
-      <p className="muted" style={{ fontSize: "1.05rem", maxWidth: "56ch", margin: "1.1rem auto 0" }}>
+      <p className="muted" style={{ fontSize: "1.05rem", fontWeight: 300, maxWidth: "52ch", margin: "1.25rem auto 0" }}>
         Submit a URL. BugHound explores it like a real user and reports real bugs across
         8 categories — functional, accessibility, performance, SEO, security, responsive,
         visual/UX, and multi-step flows.
       </p>
 
-      <form onSubmit={handleSubmit} className="hero-form" style={{ marginTop: "2.25rem" }}>
-        <input
-          className="pill-input mono"
-          type="url"
-          required
-          placeholder="https://example.com"
-          value={targetUrl}
-          onChange={(e) => setTargetUrl(e.target.value)}
-        />
+      <form onSubmit={handleSubmit} className="hero-form" style={{ marginTop: "2.5rem" }}>
+        <div className="ai-input-row">
+          <input
+            className="ai-input mono"
+            type="url"
+            required
+            placeholder="https://example.com"
+            value={targetUrl}
+            onChange={(e) => setTargetUrl(e.target.value)}
+          />
+          <button type="submit" className="ai-input-submit" disabled={submitting} aria-label="Run scan">
+            {submitting ? "…" : "→"}
+          </button>
+        </div>
 
         <div style={{ display: "flex", justifyContent: "center", marginTop: "1rem" }}>
           <div className="segmented">
@@ -60,10 +65,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        <button type="submit" className="btn-primary btn-pill" disabled={submitting} style={{ marginTop: "1.4rem" }}>
-          {submitting ? "Starting scan…" : "→ Run scan"}
-        </button>
-
         {error && (
           <p style={{ color: "var(--danger)", marginTop: "0.9rem", fontSize: "0.85rem" }}>{error}</p>
         )}
@@ -75,18 +76,18 @@ export default function HomePage() {
         </p>
       </form>
 
-      <div className="chip-row" style={{ marginTop: "3rem" }}>
+      <div className="chip-row">
         {Object.entries(TIERS).map(([id, tier]) => (
-          <span className="chip" key={id} style={{ "--tier-color": tier.color } as React.CSSProperties}>
-            <span className="dot" />
-            {tier.label}
-          </span>
+          <div className="chip" key={id} style={{ "--tier-color": tier.color } as React.CSSProperties}>
+            <span className="chip-title">{tier.label}</span>
+            <span className="chip-desc">{tier.description}</span>
+          </div>
         ))}
       </div>
 
-      <p className="faint" style={{ fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", marginTop: "1rem" }}>
+      <span className="mono-label" style={{ display: "block", textAlign: "center", marginBottom: "0.5rem" }}>
         Real findings, from real scans
-      </p>
+      </span>
       <FindingsShowcase />
     </main>
   );

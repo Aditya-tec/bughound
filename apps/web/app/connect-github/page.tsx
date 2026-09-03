@@ -116,7 +116,7 @@ function ConnectGithubInner() {
                   alignItems: "center",
                   gap: "0.6rem",
                   padding: "0.5rem 0.6rem",
-                  borderRadius: "var(--radius-sm)",
+                  borderRadius: "var(--radius-control)",
                   border: "1px solid var(--border)",
                   opacity: f.filed_as_issue ? 0.55 : 1,
                 }}
