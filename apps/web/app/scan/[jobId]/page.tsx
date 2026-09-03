@@ -38,7 +38,7 @@ export default function ScanPage({ params }: { params: Promise<{ jobId: string }
   if (error) {
     return (
       <main>
-        <p style={{ color: "crimson" }}>{error}</p>
+        <p style={{ color: "var(--danger)" }}>{error}</p>
       </main>
     );
   }
@@ -46,27 +46,43 @@ export default function ScanPage({ params }: { params: Promise<{ jobId: string }
   if (!data) {
     return (
       <main>
-        <p className="muted">Loading…</p>
+        <div className="skeleton" style={{ height: 140, marginBottom: "1rem" }} />
+        <div className="skeleton" style={{ height: 90 }} />
       </main>
     );
   }
 
   const { job, findings } = data;
+  const live = job.status === "queued" || job.status === "running";
 
   return (
     <main>
-      <h1>Scanning {job.target_url}</h1>
-      <p>
-        <span className="badge">{job.status}</span>
+      <div className="eyebrow">{live ? "Scan in progress" : "Scan finished"}</div>
+      <h1 className="mono" style={{ fontSize: "1.6rem", wordBreak: "break-all" }}>{job.target_url}</h1>
+
+      <div style={{ marginTop: "0.9rem" }}>
+        <span className="badge badge-status" data-status={job.status}>
+          {live && <span className="pulse" />}
+          {job.status}
+        </span>
         <span className="badge">{job.pages_crawled} pages crawled</span>
         <span className="badge">{job.actions_taken} actions taken</span>
-      </p>
+      </div>
+
       {job.status === "completed" && (
-        <p className="muted">
-          Done. <a href={`/reports/${job.id}`}>View the shareable report</a>.
+        <p className="muted" style={{ marginTop: "0.9rem" }}>
+          Done — <a href={`/reports/${job.id}`} style={{ color: "var(--accent)", fontWeight: 600 }}>view the shareable report ↗</a>
         </p>
       )}
-      <h2>Findings ({findings.length})</h2>
+      {job.status === "failed" && (
+        <p style={{ color: "var(--danger)", marginTop: "0.9rem" }}>
+          This run failed. Partial findings below (if any) are still real.
+        </p>
+      )}
+
+      <hr className="divider" />
+
+      <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Findings ({findings.length})</h2>
       <FindingsList findings={findings} />
     </main>
   );

@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from "react";
 import { getJobReport, type JobWithFindings } from "@/lib/api";
 import FindingsList from "@/components/FindingsList";
+import { TIERS, SEVERITIES } from "@/lib/tiers";
 
 export default function ReportPage({ params }: { params: Promise<{ jobId: string }> }) {
   const { jobId } = use(params);
@@ -18,7 +19,7 @@ export default function ReportPage({ params }: { params: Promise<{ jobId: string
   if (error) {
     return (
       <main>
-        <p style={{ color: "crimson" }}>{error}</p>
+        <p style={{ color: "var(--danger)" }}>{error}</p>
       </main>
     );
   }
@@ -26,36 +27,73 @@ export default function ReportPage({ params }: { params: Promise<{ jobId: string
   if (!data) {
     return (
       <main>
-        <p className="muted">Loading…</p>
+        <div className="skeleton" style={{ height: 200 }} />
       </main>
     );
   }
 
   const { job, findings } = data;
+
   const bySeverity = { critical: 0, high: 0, medium: 0, low: 0 };
-  for (const f of findings) bySeverity[f.severity]++;
+  const byTier: Record<number, number> = {};
+  for (const f of findings) {
+    bySeverity[f.severity]++;
+    byTier[f.tier] = (byTier[f.tier] ?? 0) + 1;
+  }
+  const maxTierCount = Math.max(1, ...Object.values(byTier));
 
   return (
     <main>
-      <h1>BugHound report</h1>
-      <p className="muted">{job.target_url}</p>
-      <p>
-        <span className="badge">{bySeverity.critical} critical</span>
-        <span className="badge">{bySeverity.high} high</span>
-        <span className="badge">{bySeverity.medium} medium</span>
-        <span className="badge">{bySeverity.low} low</span>
-      </p>
+      <div className="eyebrow">Scan report</div>
+      <h1 style={{ fontSize: "1.9rem" }}>BugHound report</h1>
+      <p className="mono muted" style={{ marginTop: "0.4rem", wordBreak: "break-all" }}>{job.target_url}</p>
 
-      {job.mode === "scan" && (
-        <p className="muted" style={{ fontSize: "0.9rem" }}>
-          This was a read-only scan — nothing was written to any repository. If you own this
-          site, you can{" "}
-          <a href={`/connect-github?jobId=${job.id}`}>connect GitHub to file selected findings</a>{" "}
-          as issues.
-        </p>
+      <div className="stat-grid">
+        {SEVERITIES.map((sev) => (
+          <div className="stat-card" key={sev}>
+            <div className="stat-value" style={{ color: `var(--severity-${sev})` }}>{bySeverity[sev]}</div>
+            <div className="stat-label">{sev}</div>
+          </div>
+        ))}
+      </div>
+
+      {findings.length > 0 && (
+        <div className="tier-bars">
+          {Object.entries(TIERS)
+            .filter(([id]) => byTier[Number(id)])
+            .map(([id, tier]) => {
+              const count = byTier[Number(id)] ?? 0;
+              return (
+                <div className="tier-bar-row" key={id}>
+                  <span className="muted" style={{ fontWeight: 600 }}>{tier.label}</span>
+                  <div className="tier-bar-track">
+                    <div
+                      className="tier-bar-fill"
+                      style={{ "--tier-color": tier.color, width: `${(count / maxTierCount) * 100}%` } as React.CSSProperties}
+                    />
+                  </div>
+                  <span className="faint">{count}</span>
+                </div>
+              );
+            })}
+        </div>
       )}
 
-      <h2>Findings ({findings.length})</h2>
+      {job.mode === "scan" && (
+        <div className="panel" style={{ marginBottom: "2rem" }}>
+          <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>
+            This was a read-only scan — nothing was written to any repository. If you own this
+            site, you can{" "}
+            <a href={`/connect-github?jobId=${job.id}`} style={{ color: "var(--accent)", fontWeight: 600 }}>
+              connect GitHub to file selected findings ↗
+            </a>
+          </p>
+        </div>
+      )}
+
+      <hr className="divider" />
+
+      <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Findings ({findings.length})</h2>
       <FindingsList findings={findings} />
     </main>
   );

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createJob, type Mode } from "@/lib/api";
+import { TIERS } from "@/lib/tiers";
 
 export default function HomePage() {
   const router = useRouter();
@@ -26,39 +27,70 @@ export default function HomePage() {
 
   return (
     <main>
-      <h1>BugHound</h1>
-      <p className="muted">
-        Submit a URL. BugHound explores it like a real user and finds real bugs across 8
-        categories — functional, accessibility, performance, SEO, security, responsive,
+      <div className="eyebrow">Autonomous QA agent</div>
+      <h1 style={{ fontSize: "clamp(2.4rem, 5vw, 3.4rem)", maxWidth: "14ch" }}>
+        Ship less <span className="gradient-text">unseen</span> breakage.
+      </h1>
+      <p className="muted" style={{ fontSize: "1.05rem", maxWidth: "58ch", marginTop: "1rem" }}>
+        Submit a URL. BugHound explores it like a real user and reports real bugs across
+        8 categories — functional, accessibility, performance, SEO, security, responsive,
         visual/UX, and multi-step flows.
       </p>
 
-      <form onSubmit={handleSubmit} style={{ marginTop: "1.5rem" }}>
-        <div className="field-row">
+      <div className="chip-row">
+        {Object.entries(TIERS).map(([id, tier]) => (
+          <span className="chip" key={id} style={{ "--tier-color": tier.color } as React.CSSProperties}>
+            <span className="dot" />
+            {tier.label}
+          </span>
+        ))}
+      </div>
+
+      <form onSubmit={handleSubmit} className="panel">
+        <label className="faint" style={{ fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+          Target URL
+        </label>
+        <div className="field-row" style={{ marginTop: "0.6rem" }}>
           <input
+            className="input mono"
             type="url"
             required
             placeholder="https://example.com"
             value={targetUrl}
             onChange={(e) => setTargetUrl(e.target.value)}
           />
-          <select value={mode} onChange={(e) => setMode(e.target.value as Mode)}>
-            <option value="scan">Scan (report only)</option>
-            <option value="owner">Owner (auto-file issues)</option>
-          </select>
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Starting…" : "Run scan"}
-          </button>
+          <div className="segmented">
+            <button
+              type="button"
+              className={mode === "scan" ? "active" : ""}
+              onClick={() => setMode("scan")}
+            >
+              Scan
+            </button>
+            <button
+              type="button"
+              className={mode === "owner" ? "active" : ""}
+              onClick={() => setMode("owner")}
+            >
+              Owner
+            </button>
+          </div>
         </div>
-        {error && (
-          <p style={{ color: "crimson", marginTop: "0.5rem" }}>{error}</p>
-        )}
-      </form>
 
-      <p className="muted" style={{ marginTop: "2rem", fontSize: "0.9rem" }}>
-        Scan mode is read-only and never writes to your repo. Owner mode auto-files GitHub
-        issues via a personal access token — use it only on sites you own.
-      </p>
+        <button type="submit" className="btn-primary btn-full" disabled={submitting} style={{ marginTop: "1rem" }}>
+          {submitting ? "Starting scan…" : "Run scan →"}
+        </button>
+
+        {error && (
+          <p style={{ color: "var(--danger)", marginTop: "0.75rem", fontSize: "0.85rem" }}>{error}</p>
+        )}
+
+        <p className="faint" style={{ marginTop: "1rem", fontSize: "0.8rem", lineHeight: 1.6 }}>
+          <strong className="muted">Scan</strong> is read-only and never writes to your repo.{" "}
+          <strong className="muted">Owner</strong> auto-files GitHub issues via a personal
+          access token — use it only on sites you own.
+        </p>
+      </form>
     </main>
   );
 }
