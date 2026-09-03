@@ -57,44 +57,81 @@ def check_console_and_network(load_result: PageLoadResult) -> list[Finding]:
     return findings
 
 
+def _resolve_link_status(link: str) -> tuple[int | None, str | None]:
+    """Returns (status_code, error). Tries HEAD first, then falls back to GET.
+
+    Many servers either don't implement HEAD correctly (returning 405 regardless of whether
+    the resource exists) or have a WAF/bot-check that treats HEAD more strictly than GET --
+    both produce false "broken link" reports if HEAD is trusted alone. A real browser
+    following the link always sends GET, so that's the more accurate signal.
+    """
+    try:
+        resp = requests.head(link, headers={"User-Agent": USER_AGENT}, timeout=5, allow_redirects=True)
+        status = resp.status_code
+    except requests.RequestException as exc:
+        return None, str(exc)
+
+    if status < BROKEN_STATUS_THRESHOLD:
+        return status, None
+
+    try:
+        resp = requests.get(
+            link, headers={"User-Agent": USER_AGENT}, timeout=8, allow_redirects=True, stream=True
+        )
+        resp.close()
+        return resp.status_code, None
+    except requests.RequestException as exc:
+        return None, str(exc)
+
+
 def check_links(load_result: PageLoadResult, rate_limiter: RateLimiter) -> list[Finding]:
-    """HEAD-checks every extracted link. External links get a HEAD check only, never followed."""
+    """Checks every extracted link. External links get a status check only, never followed."""
     findings: list[Finding] = []
     seen: set[str] = set()
+    external = set(load_result.external_links)
 
     for link in [*load_result.internal_links, *load_result.external_links]:
         if link in seen:
             continue
         seen.add(link)
         rate_limiter.wait()
-        try:
-            resp = requests.head(
-                link, headers={"User-Agent": USER_AGENT}, timeout=5, allow_redirects=True
-            )
-            status = resp.status_code
-        except requests.RequestException as exc:
+
+        status, error = _resolve_link_status(link)
+        is_external = link in external
+        # Lower confidence for external links: a 4xx there is as likely to be the destination
+        # blocking automated requests (LinkedIn and similar platforms routinely do this for
+        # unauthenticated/bot traffic) as it is to be an actually broken link we can't verify
+        # by opening it in a real logged-in browser.
+        severity = "low" if is_external else "medium"
+        caveat = (
+            " This is an external link BugHound could not follow with a real session — "
+            "if it opens fine in your browser, the destination is likely just blocking "
+            "automated requests, not actually broken."
+            if is_external
+            else ""
+        )
+
+        if error is not None:
             findings.append(
                 Finding(
                     tier=1,
                     category="broken_link",
-                    severity="medium",
+                    severity=severity,
                     page_url=load_result.url,
                     title=f"Link unreachable: {link}",
-                    description=str(exc),
+                    description=error + caveat,
                     repro_steps=f"From {load_result.url}, follow link to {link}.",
                 )
             )
-            continue
-
-        if status >= BROKEN_STATUS_THRESHOLD:
+        elif status is not None and status >= BROKEN_STATUS_THRESHOLD:
             findings.append(
                 Finding(
                     tier=1,
                     category="broken_link",
-                    severity="medium",
+                    severity=severity,
                     page_url=load_result.url,
                     title=f"Broken link: {link} ({status})",
-                    description=f"Link returned HTTP {status}.",
+                    description=f"Link returned HTTP {status}.{caveat}",
                     repro_steps=f"From {load_result.url}, follow link to {link}.",
                 )
             )
