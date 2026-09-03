@@ -24,6 +24,7 @@ from guardrails import (
     RunTimedOut,
 )
 from metrics import RunMetrics
+from security import SSRFValidationError, validate_public_target
 from supabase_client import get_supabase, record_finding, record_run_meta, update_job
 
 RUN_TIMEOUT_SECONDS = 300
@@ -81,6 +82,18 @@ def main() -> int:
     args = parse_args()
     job_id = args.job_id
     target_url = args.target_url
+
+    # Re-check right before the crawler connects, independent of the check already
+    # done at job-creation time in api/security.py -- a hostname's DNS answer can
+    # change between the two (DNS rebinding), and this runner is the cloud VM with
+    # its own metadata service, so this is the check that actually matters.
+    try:
+        validate_public_target(target_url)
+    except SSRFValidationError as exc:
+        print(f"Refusing to scan non-public target: {exc}", file=sys.stderr)
+        now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        update_job(job_id, status="failed", started_at=now, finished_at=now)
+        return 1
 
     started_at = time.time()
     update_job(job_id, status="running", started_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))

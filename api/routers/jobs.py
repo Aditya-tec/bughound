@@ -1,20 +1,46 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 
 from api.github_dispatch import fire_run_scan
 from api.models.job import CreateJobRequest, CreateJobResponse
+from api.owner_mode import assert_owner_mode_allowed
+from api.rate_limit import enforce_scan_rate_limit, get_client_ip
+from api.security import SSRFValidationError, validate_public_target
 from api.supabase_client import get_supabase
 
 router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 
 
 @router.post("", response_model=CreateJobResponse)
-def create_job(body: CreateJobRequest) -> CreateJobResponse:
+def create_job(body: CreateJobRequest, request: Request) -> CreateJobResponse:
+    target_url = str(body.target_url)
+
+    try:
+        validate_public_target(target_url)
+    except SSRFValidationError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    if body.mode == "owner":
+        assert_owner_mode_allowed(target_url)
+
     supabase = get_supabase()
-    result = (
-        supabase.table("jobs")
-        .insert({"target_url": str(body.target_url), "mode": body.mode})
-        .execute()
-    )
+    client_ip = get_client_ip(request)
+    enforce_scan_rate_limit(supabase, client_ip)
+
+    try:
+        result = (
+            supabase.table("jobs")
+            .insert({"target_url": target_url, "mode": body.mode, "client_ip": client_ip})
+            .execute()
+        )
+    except Exception:
+        # The client_ip column may not exist yet if the migration in supabase/schema.sql
+        # hasn't been applied -- degrade to creating the job without it rather than
+        # hard-failing every scan until someone runs the migration.
+        result = (
+            supabase.table("jobs")
+            .insert({"target_url": target_url, "mode": body.mode})
+            .execute()
+        )
     if not result.data:
         raise HTTPException(status_code=500, detail="Failed to create job")
 

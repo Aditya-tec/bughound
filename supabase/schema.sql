@@ -9,8 +9,11 @@ create table jobs (
   actions_taken int default 0,
   started_at timestamptz,
   finished_at timestamptz,
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  client_ip text
 );
+
+create index if not exists jobs_client_ip_created_at_idx on jobs (client_ip, created_at);
 
 create table findings (
   id uuid primary key default gen_random_uuid(),

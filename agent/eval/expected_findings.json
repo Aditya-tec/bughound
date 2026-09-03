@@ -1,0 +1,71 @@
+{
+  "_readme": "Ground truth for the eval suite. Each fixture page has one or more deliberately planted bugs. `keywords` is a list of alternatives -- a fixture's bug counts as 'found' if ANY finding on that job has tier == tier and one of these substrings (case-insensitive) in its title. This only measures recall against known-planted bugs; it does NOT auto-score precision, since that requires knowing every real bug on a page, not just the planted ones -- see agent/eval/run_eval.py's per-page 'extra findings' output for manual precision review.",
+  "fixtures": [
+    {
+      "path": "/eval/tier1-functional",
+      "tier": 1,
+      "planted_bugs": [
+        {"label": "uncaught console error", "keywords": ["console error"]},
+        {"label": "broken image", "keywords": ["broken image"]},
+        {"label": "broken internal link", "keywords": ["broken link", "link unreachable"]},
+        {"label": "form submits with empty required field", "keywords": ["empty required field"]}
+      ]
+    },
+    {
+      "path": "/eval/tier2-accessibility",
+      "tier": 2,
+      "planted_bugs": [
+        {"label": "missing alt text", "keywords": ["alt"]},
+        {"label": "insufficient color contrast", "keywords": ["contrast"]},
+        {"label": "unlabeled form input", "keywords": ["label"]}
+      ]
+    },
+    {
+      "path": "/eval/tier3-performance",
+      "tier": 3,
+      "planted_bugs": [
+        {"label": "LCP over threshold (~2.2s artificial server delay)", "keywords": ["lcp is"]}
+      ]
+    },
+    {
+      "path": "/eval/tier4-seo",
+      "tier": 4,
+      "planted_bugs": [
+        {"label": "missing H1", "keywords": ["missing h1"]},
+        {"label": "missing/broken sitemap.xml or robots.txt (site-wide gap)", "keywords": ["missing or broken"]}
+      ]
+    },
+    {
+      "path": "/eval/tier5-security",
+      "tier": 5,
+      "planted_bugs": [
+        {"label": "missing Content-Security-Policy header (site-wide gap)", "keywords": ["content-security-policy"]},
+        {"label": "missing X-Frame-Options header (site-wide gap)", "keywords": ["x-frame-options"]},
+        {"label": "missing Strict-Transport-Security header (site-wide gap)", "keywords": ["strict-transport-security"]},
+        {"label": "missing X-Content-Type-Options header (site-wide gap)", "keywords": ["x-content-type-options"]}
+      ]
+    },
+    {
+      "path": "/eval/tier6-responsive",
+      "tier": 6,
+      "planted_bugs": [
+        {"label": "touch target under 44px", "keywords": ["touch target"]}
+      ]
+    },
+    {
+      "path": "/eval/tier7-visual-ux",
+      "tier": 7,
+      "planted_bugs": [
+        {"label": "leftover placeholder content", "keywords": ["placeholder", "lorem"]},
+        {"label": "misleading CTA", "keywords": ["misleading", "cta", "buy now"]}
+      ]
+    },
+    {
+      "path": "/eval/tier8-flow",
+      "tier": 8,
+      "planted_bugs": [
+        {"label": "navigation link does not change URL or load new content", "keywords": ["does not change", "navigat"]}
+      ]
+    }
+  ]
+}
