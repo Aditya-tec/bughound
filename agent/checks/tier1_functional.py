@@ -9,6 +9,10 @@ from guardrails import USER_AGENT, RateLimiter
 
 BROKEN_STATUS_THRESHOLD = 400
 
+# Non-standard status codes that specific platforms use to signal "we blocked this as bot
+# traffic" rather than "this resource doesn't exist." Unambiguous enough to skip entirely.
+KNOWN_BOT_BLOCK_STATUSES = {999}  # LinkedIn
+
 
 def check_console_and_network(load_result: PageLoadResult) -> list[Finding]:
     findings: list[Finding] = []
@@ -97,6 +101,13 @@ def check_links(load_result: PageLoadResult, rate_limiter: RateLimiter) -> list[
         rate_limiter.wait()
 
         status, error = _resolve_link_status(link)
+
+        # 999 isn't a real HTTP status -- it's LinkedIn's proprietary code for "automated
+        # request blocked," unambiguous enough that flagging it as a possibly-broken link
+        # (even at low severity) would just be noise. Skip it outright rather than report it.
+        if status in KNOWN_BOT_BLOCK_STATUSES:
+            continue
+
         is_external = link in external
         # Lower confidence for external links: a 4xx there is as likely to be the destination
         # blocking automated requests (LinkedIn and similar platforms routinely do this for
