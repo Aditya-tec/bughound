@@ -84,7 +84,7 @@ export default function ReportPage({ params }: { params: Promise<{ jobId: string
           <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>
             This was a read-only scan — nothing was written to any repository. If you own this
             site, you can{" "}
-            <a href={`/connect-github?jobId=${job.id}`} style={{ color: "var(--iris)", fontWeight: 600 }}>
+            <a href={`/connect-github?jobId=${job.id}`} className="link">
               connect GitHub to file selected findings ↗
             </a>
           </p>

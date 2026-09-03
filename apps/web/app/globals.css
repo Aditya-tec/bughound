@@ -1,81 +1,76 @@
 /* ---------------------------------------------------------------------- */
-/* Tokens — adapted from the "Origin Financial" style reference            */
+/* Tokens — Linear style reference: midnight command center, one accent    */
 /* ---------------------------------------------------------------------- */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 
-  --bg: #f5f5f5;
-  --bg-deep: #ececec;
-  --bg-elevated: #ffffff;
-  --surface: rgba(15, 16, 17, 0.04);
-  --surface-hover: rgba(15, 16, 17, 0.07);
-  --border: rgba(15, 16, 17, 0.12);
-  --border-strong: rgba(15, 16, 17, 0.22);
-  --fg: #0f1011;
-  --muted: #55565a;
-  --faint: #8a8b8d;
-  --pure: #0f1011;
-  --pure-fg: #ffffff;
+  /* Surfaces (darkest → lightest) */
+  --void: #08090a;
+  --carbon: #0f1011;
+  --obsidian: #161718;
+  --graphite: #23252a;
+  --smoke: #383b3f;
 
-  --iris: #6b62e0;
-  --cyan: #0092b3;
-  --pale-iris: #4b49aa;
-  --deep-iris: #4b49aa;
-  --orchid: #b5449f;
-  --periwinkle: #3f6fc4;
-  --silver: #ffffff;
+  /* Text (dimmest → brightest) */
+  --ash: #62666d;
+  --fog: #8a8f98;
+  --mist: #d0d6e0;
+  --bone: #e5e5e6;
+  --paper: #ffffff;
 
-  --danger: #b3223f;
-  --shadow-lg: rgba(0, 0, 0, 0.2) 0px 18px 20px 0px;
+  /* The one chromatic action color — never decoration, never a second button */
+  --acid-lime: #e4f222;
+  --acid-lime-ink: #08090a;
 
-  --radius-control: 8px;
-  --radius-card: 16px;
-  --radius-feature: 30px;
+  /* Supporting accents — tag/badge fills and dots only, never body text */
+  --pulse-green: #27a644;
+  --coral-red: #eb5757;
+  --signal-teal: #02b8cc;
+  --iris-violet: #6366f1;
+  --lavender: #8b5cf6;
+  --amber: #f2994a;
+  --pink: #ec4899;
+  --sky: #3b82f6;
+
+  /* Semantic aliases used throughout components */
+  --bg: var(--void);
+  --bg-elevated: var(--carbon);
+  --surface: rgba(255, 255, 255, 0.02);
+  --surface-hover: rgba(255, 255, 255, 0.05);
+  --border: var(--graphite);
+  --border-strong: var(--smoke);
+  --fg: var(--paper);
+  --muted: var(--mist);
+  --faint: var(--fog);
+
+  --danger: var(--coral-red);
+
+  --radius-control: 6px;
+  --radius-card: 12px;
+  --radius-badge: 4px;
   --radius-pill: 9999px;
 
-  --severity-critical: #b3223f;
-  --severity-high: #b3550f;
-  --severity-medium: #92720a;
-  --severity-low: #6a6b6b;
+  --severity-critical: var(--coral-red);
+  --severity-high: var(--amber);
+  --severity-medium: var(--fog);
+  --severity-low: var(--ash);
 
-  --tier-1: #dd5c72;
-  --tier-2: #6b62e0;
-  --tier-3: #0092b3;
-  --tier-4: #2f9e57;
-  --tier-5: #b3550f;
-  --tier-6: #3f6fc4;
-  --tier-7: #b5449f;
-  --tier-8: #92720a;
+  --tier-1: var(--coral-red);
+  --tier-2: var(--iris-violet);
+  --tier-3: var(--signal-teal);
+  --tier-4: var(--pulse-green);
+  --tier-5: var(--amber);
+  --tier-6: var(--sky);
+  --tier-7: var(--lavender);
+  --tier-8: var(--pink);
 
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
-  --font-mono: "Roboto Mono", ui-monospace, "SF Mono", Consolas, monospace;
-}
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, monospace;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1011;
-    --bg-deep: #090a0b;
-    --bg-elevated: #2e2e2e;
-    --surface: rgba(255, 255, 255, 0.05);
-    --surface-hover: #3f4041;
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.18);
-    --fg: #f5f5f7;
-    --muted: #9f9fa0;
-    --faint: #6a6b6b;
-    --pure: #ffffff;
-    --pure-fg: #000000;
-
-    --iris: #847dff;
-    --cyan: #00b3dd;
-    --pale-iris: #d1c9ff;
-    --deep-iris: #4b49aa;
-    --orchid: #dd90d8;
-    --periwinkle: #90b8f0;
-    --silver: #cacaca;
-  }
+  --shadow-card: rgba(0, 0, 0, 0.4) 0px 2px 4px 0px;
+  --shadow-lime: rgba(0, 0, 0, 0.01) 0px 5px 2px 0px, rgba(0, 0, 0, 0.04) 0px 3px 2px 0px,
+    rgba(0, 0, 0, 0.07) 0px 1px 1px 0px, rgba(0, 0, 0, 0.08) 0px 0px 1px 0px;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -93,6 +88,7 @@ html {
 body {
   margin: 0;
   font-family: var(--font-sans);
+  font-feature-settings: "cv01" 1, "ss03" 1, "zero" 1;
   color: var(--fg);
   background: var(--bg);
   min-height: 100vh;
@@ -100,15 +96,16 @@ body {
 }
 
 h1, h2, h3 {
-  font-family: var(--font-display);
-  font-weight: 300;
-  letter-spacing: 0;
-  line-height: 1.0;
+  font-family: var(--font-sans);
+  font-weight: 510;
+  letter-spacing: -0.022em;
+  line-height: 1.05;
+  color: var(--paper);
   margin: 0;
 }
 
 h2, h3 {
-  font-weight: 400;
+  font-weight: 500;
 }
 
 a {
@@ -121,8 +118,8 @@ code, .mono {
 }
 
 ::selection {
-  background: var(--iris);
-  color: #fff;
+  background: var(--acid-lime);
+  color: var(--acid-lime-ink);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -150,22 +147,23 @@ code, .mono {
   gap: 0.6rem;
   text-decoration: none;
   color: var(--fg);
-  font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: -0.01em;
-  font-family: var(--font-sans);
+  font-weight: 590;
+  font-size: 0.95rem;
+  letter-spacing: -0.011em;
 }
 
 .brand-mark {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: var(--radius-control);
   display: grid;
   place-items: center;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--pure-fg);
-  background: var(--pure);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--paper);
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
 }
 
 .topbar-links {
@@ -178,20 +176,22 @@ code, .mono {
 
 .topbar-links a {
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
 }
 
 .ghost-btn {
-  padding: 0.55rem 1rem;
+  padding: 0.5rem 0.9rem;
   border-radius: var(--radius-control);
-  border: 1px solid var(--border-strong);
-  color: var(--fg);
-  font-size: 0.85rem;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  border: 1px solid var(--border);
+  color: var(--mist);
+  font-size: 0.82rem;
+  font-weight: 400;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .ghost-btn:hover {
   background: var(--surface-hover);
+  border-color: var(--border-strong);
 }
 
 main {
@@ -212,7 +212,7 @@ main.hero .fan {
 }
 
 .hero-form {
-  max-width: 640px;
+  max-width: 620px;
   margin: 0 auto;
 }
 
@@ -232,29 +232,29 @@ main.narrow {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--fog);
 }
 
 .pill-chip-label {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--surface-hover);
   border-radius: var(--radius-pill);
-  padding: 0.4rem 1.1rem;
+  padding: 0.35rem 1rem;
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--fog);
 }
 
-.serif-italic {
+.italic-accent {
   font-style: italic;
+  color: var(--mist);
 }
 
 .muted {
@@ -263,6 +263,18 @@ main.narrow {
 
 .faint {
   color: var(--faint);
+}
+
+.link {
+  color: var(--mist);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.link:hover {
+  color: var(--paper);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -285,23 +297,23 @@ input[type="url"],
 input[type="text"] {
   flex: 1;
   min-width: 220px;
-  padding: 0.85rem 1rem;
+  padding: 0.75rem 0.9rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-control);
   background: var(--surface);
   color: inherit;
-  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .input:focus,
 input[type="url"]:focus,
 input[type="text"]:focus {
   outline: none;
-  border-color: var(--iris);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--iris) 25%, transparent);
+  border-color: var(--mist);
+  background: var(--surface-hover);
 }
 
-/* AI-prompt style hero input: dark well, asymmetric padding, circular submit */
+/* AI-prompt style hero input: recessed well, asymmetric padding, circular submit */
 .ai-input-row {
   position: relative;
   display: flex;
@@ -310,43 +322,45 @@ input[type="text"]:focus {
 
 .ai-input {
   width: 100%;
-  padding: 1.1rem 3.5rem 1.1rem 1.4rem;
-  border-radius: var(--radius-control);
+  padding: 1rem 3.4rem 1rem 1.3rem;
+  border-radius: var(--radius-card);
   border: 1px solid var(--border);
-  background: var(--bg-deep);
+  background: var(--surface);
   color: var(--fg);
-  font-size: 1rem;
+  font-size: 0.95rem;
   text-align: left;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .ai-input:focus {
   outline: none;
-  border-color: var(--iris);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--iris) 25%, transparent);
+  border-color: var(--mist);
+  background: var(--surface-hover);
 }
 
 .ai-input-submit {
   position: absolute;
-  right: 8px;
+  right: 7px;
   top: 50%;
   transform: translateY(-50%);
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
   border: none;
-  background: color-mix(in srgb, var(--fg) 14%, transparent);
-  color: var(--fg);
+  background: var(--acid-lime);
+  color: var(--acid-lime-ink);
   display: grid;
   place-items: center;
   padding: 0;
   font-size: 1rem;
+  font-weight: 590;
   cursor: pointer;
-  transition: background 0.2s ease;
+  box-shadow: var(--shadow-lime);
+  transition: filter 0.15s ease;
 }
 
 .ai-input-submit:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--fg) 22%, transparent);
+  filter: brightness(1.08);
 }
 
 .segmented {
@@ -361,32 +375,32 @@ input[type="text"]:focus {
 .segmented button {
   border: none;
   background: transparent;
-  color: var(--muted);
-  padding: 0.55rem 0.9rem;
-  border-radius: calc(var(--radius-control) - 3px);
+  color: var(--fog);
+  padding: 0.5rem 0.85rem;
+  border-radius: calc(var(--radius-control) - 2px);
   font-weight: 500;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .segmented button.active {
-  background: var(--bg-elevated);
-  color: var(--fg);
+  background: var(--surface-hover);
+  color: var(--paper);
 }
 
 button, .btn {
-  padding: 0.75rem 1.2rem;
+  padding: 0.6rem 1rem;
   border: 1px solid transparent;
   border-radius: var(--radius-control);
   background: var(--surface);
   border-color: var(--border);
-  color: var(--fg);
+  color: var(--mist);
   cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  font-weight: 400;
+  font-size: 0.85rem;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 button:hover:not(:disabled), .btn:hover:not(:disabled) {
@@ -398,15 +412,18 @@ button:disabled, .btn:disabled {
   cursor: not-allowed;
 }
 
+/* The single chromatic action per view — never used for decoration */
 .btn-primary {
-  background: var(--pure);
+  background: var(--acid-lime);
   border: none;
-  color: var(--pure-fg);
-  font-weight: 500;
+  color: var(--acid-lime-ink);
+  font-weight: 510;
+  letter-spacing: -0.011em;
+  box-shadow: var(--shadow-lime);
 }
 
 .btn-primary:hover:not(:disabled) {
-  box-shadow: var(--shadow-lg);
+  filter: brightness(1.06);
 }
 
 .btn-full {
@@ -415,14 +432,14 @@ button:disabled, .btn:disabled {
 }
 
 /* ---------------------------------------------------------------------- */
-/* Cards — flat, no shadows; surfaces differentiate by color step          */
+/* Cards — flat, hairline borders, no ambient shadow                      */
 /* ---------------------------------------------------------------------- */
 
 .panel {
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--bg-elevated);
-  padding: 1.75rem;
+  padding: 1.5rem;
 }
 
 .card {
@@ -431,10 +448,10 @@ button:disabled, .btn:disabled {
   border-radius: var(--radius-card);
   background: var(--bg-elevated);
   padding: 1.1rem 1.25rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.7rem;
   overflow: hidden;
-  animation: rise 0.3s ease both;
-  transition: border-color 0.2s ease;
+  animation: rise 0.25s ease both;
+  transition: border-color 0.15s ease;
 }
 
 .card:hover {
@@ -442,13 +459,12 @@ button:disabled, .btn:disabled {
 }
 
 @keyframes rise {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(3px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* ---------------------------------------------------------------------- */
-/* Badges — mono uppercase labels; chromatic color reserved for a small    */
-/* dot marker only, never as fill/border on small text                    */
+/* Badges — neutral grey text; chromatic color lives only in the dot       */
 /* ---------------------------------------------------------------------- */
 
 .badge {
@@ -458,15 +474,14 @@ button:disabled, .btn:disabled {
   font-family: var(--font-mono);
   font-size: 0.66rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 0.3rem 0.6rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  background: var(--surface);
+  padding: 0.28rem 0.55rem;
+  border-radius: var(--radius-badge);
+  background: var(--surface-hover);
   margin-right: 0.4rem;
   text-decoration: none;
-  color: var(--muted);
+  color: var(--fog);
   white-space: nowrap;
 }
 
@@ -485,7 +500,7 @@ button:disabled, .btn:disabled {
 .badge[data-severity="low"]::before      { background: var(--severity-low); }
 
 .badge[data-tier]::before {
-  background: var(--tier-color, var(--iris));
+  background: var(--tier-color, var(--fog));
 }
 
 .badge-status {
@@ -497,7 +512,7 @@ button:disabled, .btn:disabled {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--cyan);
+  background: var(--signal-teal);
 }
 
 .badge-status[data-status="completed"]::before {
@@ -505,7 +520,7 @@ button:disabled, .btn:disabled {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #2f9e57;
+  background: var(--pulse-green);
 }
 
 .badge-status[data-status="failed"]::before {
@@ -513,14 +528,14 @@ button:disabled, .btn:disabled {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--severity-critical);
+  background: var(--coral-red);
 }
 
 .pulse {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--cyan);
+  background: var(--signal-teal);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
@@ -548,9 +563,10 @@ button:disabled, .btn:disabled {
 }
 
 .stat-value {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: 2.1rem;
+  font-family: var(--font-sans);
+  font-weight: 590;
+  font-size: 2rem;
+  letter-spacing: -0.022em;
   line-height: 1;
 }
 
@@ -560,8 +576,8 @@ button:disabled, .btn:disabled {
   font-size: 0.66rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
+  letter-spacing: 0.08em;
+  color: var(--fog);
 }
 
 .tier-bars {
@@ -582,56 +598,64 @@ button:disabled, .btn:disabled {
 .tier-bar-track {
   height: 4px;
   border-radius: 999px;
-  background: var(--surface);
+  background: var(--surface-hover);
   overflow: hidden;
 }
 
 .tier-bar-fill {
   height: 100%;
   border-radius: 999px;
-  background: var(--tier-color, var(--iris));
+  background: var(--tier-color, var(--fog));
 }
 
 /* ---------------------------------------------------------------------- */
-/* Feature category tiles (landing page) — full-bleed color, the only      */
-/* place chromatic accents are allowed to carry text                      */
+/* Tier category tags (landing page) — neutral card, colored dot only      */
 /* ---------------------------------------------------------------------- */
 
 .chip-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.75rem;
-  margin: 1.75rem 0 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.7rem;
+  margin: 2rem 0 2.5rem;
   text-align: left;
 }
 
 .chip {
-  border-radius: var(--radius-feature);
-  padding: 1.4rem 1.3rem;
-  background: color-mix(in srgb, var(--tier-color) 88%, black 0%);
-  color: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  padding: 1rem 1.1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  min-height: 96px;
-  justify-content: space-between;
+  gap: 0.45rem;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.chip .dot {
-  display: none;
+.chip:hover {
+  border-color: var(--tier-color);
+  background: var(--surface-hover);
+}
+
+.chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tier-color);
 }
 
 .chip-title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 1.05rem;
-  line-height: 1.15;
+  font-family: var(--font-sans);
+  font-weight: 510;
+  font-size: 0.92rem;
+  letter-spacing: -0.011em;
+  color: var(--paper);
+  line-height: 1.2;
 }
 
 .chip-desc {
-  font-size: 0.72rem;
-  opacity: 0.85;
-  line-height: 1.4;
+  font-size: 0.78rem;
+  color: var(--fog);
+  line-height: 1.5;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -641,20 +665,20 @@ button:disabled, .btn:disabled {
 .fan {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
+  gap: 0.9rem;
   padding: 1rem 0 2rem;
   text-align: left;
 }
 
 .fan-card {
-  padding: 1.5rem;
+  padding: 1.35rem;
   border-radius: var(--radius-card);
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  transition: border-color 0.2s ease;
+  gap: 0.85rem;
+  transition: border-color 0.15s ease;
 }
 
 .fan-card:hover {
@@ -662,30 +686,21 @@ button:disabled, .btn:disabled {
 }
 
 .fan-card .fan-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--tier-color);
 }
 
 .fan-quote {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-weight: 400;
-  font-size: 1.15rem;
-  line-height: 1.3;
+  font-size: 1rem;
+  letter-spacing: -0.011em;
+  line-height: 1.45;
+  color: var(--mist);
   margin: 0;
   flex: 1;
-}
-
-/* ---------------------------------------------------------------------- */
-/* Inverted (silver) card — used sparingly to break the dark rhythm        */
-/* ---------------------------------------------------------------------- */
-
-.panel-inverted {
-  border-radius: var(--radius-card);
-  background: var(--silver);
-  color: #000;
-  padding: 1.75rem;
 }
 
 /* ---------------------------------------------------------------------- */

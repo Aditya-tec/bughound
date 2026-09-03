@@ -31,7 +31,7 @@ export default function HomePage() {
       <span className="pill-chip-label">Autonomous QA agent</span>
 
       <h1 style={{ fontSize: "clamp(2.2rem, 5vw, 3.6rem)", maxWidth: "16ch", margin: "1.25rem auto 0" }}>
-        Every product has bugs it <span className="serif-italic">doesn&apos;t</span> know about.
+        Every product has bugs it <span className="italic-accent">doesn&apos;t</span> know about.
       </h1>
       <p className="muted" style={{ fontSize: "1.05rem", fontWeight: 300, maxWidth: "52ch", margin: "1.25rem auto 0" }}>
         Submit a URL. BugHound explores it like a real user and reports real bugs across
@@ -79,6 +79,7 @@ export default function HomePage() {
       <div className="chip-row">
         {Object.entries(TIERS).map(([id, tier]) => (
           <div className="chip" key={id} style={{ "--tier-color": tier.color } as React.CSSProperties}>
+            <span className="chip-dot" />
             <span className="chip-title">{tier.label}</span>
             <span className="chip-desc">{tier.description}</span>
           </div>

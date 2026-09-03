@@ -17,7 +17,7 @@ export const TIERS: Record<number, TierMeta> = {
 };
 
 export function tierMeta(tier: number): TierMeta {
-  return TIERS[tier] ?? { label: `Tier ${tier}`, short: `T${tier}`, color: "var(--iris)", description: "" };
+  return TIERS[tier] ?? { label: `Tier ${tier}`, short: `T${tier}`, color: "var(--fog)", description: "" };
 }
 
 export const SEVERITIES = ["critical", "high", "medium", "low"] as const;
