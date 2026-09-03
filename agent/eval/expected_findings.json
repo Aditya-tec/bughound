@@ -41,9 +41,9 @@
       "planted_bugs": [
         {"label": "missing Content-Security-Policy header (site-wide gap)", "keywords": ["content-security-policy"]},
         {"label": "missing X-Frame-Options header (site-wide gap)", "keywords": ["x-frame-options"]},
-        {"label": "missing Strict-Transport-Security header (site-wide gap)", "keywords": ["strict-transport-security"]},
         {"label": "missing X-Content-Type-Options header (site-wide gap)", "keywords": ["x-content-type-options"]}
-      ]
+      ],
+      "_note": "Strict-Transport-Security is deliberately NOT in this list -- Vercel injects HSTS at the edge for every HTTPS deployment on this platform regardless of app code, so it's never actually missing here. An earlier version of this manifest wrongly expected it; confirmed via `curl -I` against the live site before removing it, not assumed."
     },
     {
       "path": "/eval/tier6-responsive",

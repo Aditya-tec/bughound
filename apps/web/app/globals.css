@@ -182,7 +182,7 @@ code, .mono {
 .brand-mark {
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: 50%;
   display: block;
   object-fit: contain;
 }

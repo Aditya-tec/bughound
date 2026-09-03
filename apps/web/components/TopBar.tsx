@@ -5,7 +5,7 @@ export default function TopBar() {
   return (
     <div className="topbar">
       <Link href="/" className="brand">
-        <Image src="/logo-128.png" alt="" width={30} height={30} className="brand-mark" priority />
+        <Image src="/logo-round-128.png" alt="" width={30} height={30} className="brand-mark" priority />
         BugHound
       </Link>
       <nav className="topbar-nav">

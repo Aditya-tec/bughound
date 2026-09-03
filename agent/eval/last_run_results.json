@@ -1,0 +1,1139 @@
+{
+  "overall_recall": 0.6666666666666666,
+  "planted_total": 18,
+  "planted_found": 12,
+  "fixtures": [
+    {
+      "path": "/eval/tier1-functional",
+      "tier": 1,
+      "job_id": "577bba8d-5780-46b8-8a5f-05818b1b0425",
+      "status": "completed",
+      "planted_bugs": [
+        {
+          "label": "uncaught console error",
+          "found": true,
+          "matched_title": "Uncaught console error"
+        },
+        {
+          "label": "broken image",
+          "found": true,
+          "matched_title": "Broken image: https://bughound-web.vercel.app/eval/does-not-exist.png"
+        },
+        {
+          "label": "broken internal link",
+          "found": true,
+          "matched_title": "Broken link: https://bughound-web.vercel.app/eval/tier1-functional/dead-page (404)"
+        },
+        {
+          "label": "form submits with empty required field",
+          "found": true,
+          "matched_title": "Form #0 submits with empty required fields and no visible error"
+        }
+      ],
+      "extra_findings": [
+        {
+          "tier": 4,
+          "title": "Incomplete Open Graph tags"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken robots.txt"
+        },
+        {
+          "tier": 1,
+          "title": "Uncaught console error"
+        },
+        {
+          "tier": 1,
+          "title": "GET https://bughound-web.vercel.app/eval/does-not-exist.png returned 404"
+        },
+        {
+          "tier": 1,
+          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 4,
+          "title": "Missing canonical tag"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken sitemap.xml"
+        },
+        {
+          "tier": 5,
+          "title": "Missing Content-Security-Policy header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Frame-Options header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Content-Type-Options header"
+        },
+        {
+          "tier": 6,
+          "title": "6 touch target(s) under 44px at mobile width"
+        },
+        {
+          "tier": 6,
+          "title": "9 touch target(s) under 44px at tablet width"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        }
+      ]
+    },
+    {
+      "path": "/eval/tier2-accessibility",
+      "tier": 2,
+      "job_id": "8b27c00d-17f2-4d48-b0b0-32a3d9a2481c",
+      "status": "completed",
+      "planted_bugs": [
+        {
+          "label": "missing alt text",
+          "found": true,
+          "matched_title": "image-alt: Images must have alternative text"
+        },
+        {
+          "label": "insufficient color contrast",
+          "found": true,
+          "matched_title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "label": "unlabeled form input",
+          "found": false
+        }
+      ],
+      "extra_findings": [
+        {
+          "tier": 1,
+          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 4,
+          "title": "Missing canonical tag"
+        },
+        {
+          "tier": 4,
+          "title": "Incomplete Open Graph tags"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken robots.txt"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken sitemap.xml"
+        },
+        {
+          "tier": 5,
+          "title": "Missing Content-Security-Policy header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Frame-Options header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Content-Type-Options header"
+        },
+        {
+          "tier": 6,
+          "title": "4 touch target(s) under 44px at mobile width"
+        },
+        {
+          "tier": 6,
+          "title": "7 touch target(s) under 44px at tablet width"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "image-alt: Images must have alternative text"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 7,
+          "title": "Low Contrast Text"
+        },
+        {
+          "tier": 7,
+          "title": "Unlabeled Input Field (Accessibility Failure)"
+        },
+        {
+          "tier": 7,
+          "title": "Exposure of Internal Testing/Development Content"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "image-alt: Images must have alternative text"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 7,
+          "title": "Accessibility: Low contrast text"
+        },
+        {
+          "tier": 7,
+          "title": "Accessibility: Input/Control missing accessible label"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "image-alt: Images must have alternative text"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "image-alt: Images must have alternative text"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "image-alt: Images must have alternative text"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "image-alt: Images must have alternative text"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "image-alt: Images must have alternative text"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        }
+      ]
+    },
+    {
+      "path": "/eval/tier3-performance",
+      "tier": 3,
+      "job_id": "4d42f6f7-5cdf-4569-a887-fc67abdb3df9",
+      "status": "completed",
+      "planted_bugs": [
+        {
+          "label": "LCP over threshold (~2.2s artificial server delay)",
+          "found": false
+        }
+      ],
+      "extra_findings": [
+        {
+          "tier": 1,
+          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 4,
+          "title": "Missing canonical tag"
+        },
+        {
+          "tier": 4,
+          "title": "Incomplete Open Graph tags"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken robots.txt"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken sitemap.xml"
+        },
+        {
+          "tier": 5,
+          "title": "Missing Content-Security-Policy header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Frame-Options header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Content-Type-Options header"
+        },
+        {
+          "tier": 6,
+          "title": "4 touch target(s) under 44px at mobile width"
+        },
+        {
+          "tier": 6,
+          "title": "7 touch target(s) under 44px at tablet width"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        }
+      ]
+    },
+    {
+      "path": "/eval/tier4-seo",
+      "tier": 4,
+      "job_id": "7117276f-8570-4854-bea6-7b73cf5a6b3c",
+      "status": "completed",
+      "planted_bugs": [
+        {
+          "label": "missing H1",
+          "found": true,
+          "matched_title": "Missing H1"
+        },
+        {
+          "label": "missing/broken sitemap.xml or robots.txt (site-wide gap)",
+          "found": true,
+          "matched_title": "Missing or broken robots.txt"
+        }
+      ],
+      "extra_findings": [
+        {
+          "tier": 1,
+          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "page-has-heading-one: Page should contain a level-one heading"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 4,
+          "title": "Missing canonical tag"
+        },
+        {
+          "tier": 4,
+          "title": "Incomplete Open Graph tags"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken sitemap.xml"
+        },
+        {
+          "tier": 5,
+          "title": "Missing Content-Security-Policy header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Frame-Options header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Content-Type-Options header"
+        },
+        {
+          "tier": 6,
+          "title": "4 touch target(s) under 44px at mobile width"
+        },
+        {
+          "tier": 6,
+          "title": "7 touch target(s) under 44px at tablet width"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "page-has-heading-one: Page should contain a level-one heading"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "page-has-heading-one: Page should contain a level-one heading"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "page-has-heading-one: Page should contain a level-one heading"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        }
+      ]
+    },
+    {
+      "path": "/eval/tier5-security",
+      "tier": 5,
+      "job_id": "929d8c76-5851-4798-9154-8a49709b25b1",
+      "status": "completed",
+      "planted_bugs": [
+        {
+          "label": "missing Content-Security-Policy header (site-wide gap)",
+          "found": true,
+          "matched_title": "Missing Content-Security-Policy header"
+        },
+        {
+          "label": "missing X-Frame-Options header (site-wide gap)",
+          "found": true,
+          "matched_title": "Missing X-Frame-Options header"
+        },
+        {
+          "label": "missing Strict-Transport-Security header (site-wide gap)",
+          "found": false
+        },
+        {
+          "label": "missing X-Content-Type-Options header (site-wide gap)",
+          "found": true,
+          "matched_title": "Missing X-Content-Type-Options header"
+        }
+      ],
+      "extra_findings": [
+        {
+          "tier": 1,
+          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 4,
+          "title": "Missing canonical tag"
+        },
+        {
+          "tier": 4,
+          "title": "Incomplete Open Graph tags"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken robots.txt"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken sitemap.xml"
+        },
+        {
+          "tier": 6,
+          "title": "4 touch target(s) under 44px at mobile width"
+        },
+        {
+          "tier": 6,
+          "title": "7 touch target(s) under 44px at tablet width"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 8,
+          "title": "External GitHub link does not navigate"
+        }
+      ]
+    },
+    {
+      "path": "/eval/tier6-responsive",
+      "tier": 6,
+      "job_id": "34b62847-1bb3-4b60-838d-e8c0b37b4c35",
+      "status": "completed",
+      "planted_bugs": [
+        {
+          "label": "touch target under 44px",
+          "found": true,
+          "matched_title": "5 touch target(s) under 44px at mobile width"
+        }
+      ],
+      "extra_findings": [
+        {
+          "tier": 1,
+          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 4,
+          "title": "Missing canonical tag"
+        },
+        {
+          "tier": 4,
+          "title": "Incomplete Open Graph tags"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken robots.txt"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken sitemap.xml"
+        },
+        {
+          "tier": 5,
+          "title": "Missing Content-Security-Policy header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Frame-Options header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Content-Type-Options header"
+        },
+        {
+          "tier": 6,
+          "title": "8 touch target(s) under 44px at tablet width"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 7,
+          "title": "Small touch target for interactive element"
+        },
+        {
+          "tier": 7,
+          "title": "Internal testing content exposed on live page"
+        },
+        {
+          "tier": 7,
+          "title": "Close icon clipped in top banner"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 8,
+          "title": "External link (STAR ON GITHUB) does not navigate away"
+        }
+      ]
+    },
+    {
+      "path": "/eval/tier7-visual-ux",
+      "tier": 7,
+      "job_id": "c8784aba-f39c-4033-8432-3d7f78d0271a",
+      "status": "completed",
+      "planted_bugs": [
+        {
+          "label": "leftover placeholder content",
+          "found": false
+        },
+        {
+          "label": "misleading CTA",
+          "found": false
+        }
+      ],
+      "extra_findings": [
+        {
+          "tier": 1,
+          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 4,
+          "title": "Missing canonical tag"
+        },
+        {
+          "tier": 4,
+          "title": "Incomplete Open Graph tags"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken robots.txt"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken sitemap.xml"
+        },
+        {
+          "tier": 5,
+          "title": "Missing Content-Security-Policy header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Frame-Options header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Content-Type-Options header"
+        },
+        {
+          "tier": 6,
+          "title": "4 touch target(s) under 44px at mobile width"
+        },
+        {
+          "tier": 6,
+          "title": "7 touch target(s) under 44px at tablet width"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 8,
+          "title": "External link not navigating from FAQ section"
+        }
+      ]
+    },
+    {
+      "path": "/eval/tier8-flow",
+      "tier": 8,
+      "job_id": "2f7f3492-b2c8-4961-acf7-04329adfa4bf",
+      "status": "completed",
+      "planted_bugs": [
+        {
+          "label": "navigation link does not change URL or load new content",
+          "found": false
+        }
+      ],
+      "extra_findings": [
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 1,
+          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 4,
+          "title": "Missing canonical tag"
+        },
+        {
+          "tier": 4,
+          "title": "Incomplete Open Graph tags"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken robots.txt"
+        },
+        {
+          "tier": 4,
+          "title": "Missing or broken sitemap.xml"
+        },
+        {
+          "tier": 5,
+          "title": "Missing Content-Security-Policy header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Frame-Options header"
+        },
+        {
+          "tier": 5,
+          "title": "Missing X-Content-Type-Options header"
+        },
+        {
+          "tier": 6,
+          "title": "4 touch target(s) under 44px at mobile width"
+        },
+        {
+          "tier": 6,
+          "title": "7 touch target(s) under 44px at tablet width"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 7,
+          "title": "Dead-end navigation on 'Continue' button"
+        },
+        {
+          "tier": 7,
+          "title": "Misleading 'Continue' call-to-action"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        }
+      ]
+    }
+  ]
+}
