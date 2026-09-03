@@ -1,10 +1,11 @@
 import os
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from api.github_app_auth import get_installation_token
 from api.github_issue_filer import file_issue
+from api.rate_limit import enforce_scan_rate_limit, get_client_ip
 from api.supabase_client import get_supabase
 
 router = APIRouter(prefix="/api/jobs", tags=["issues"])
@@ -15,8 +16,13 @@ class FileIssuesRequest(BaseModel):
 
 
 @router.post("/{job_id}/file-issues")
-def file_issues(job_id: str, body: FileIssuesRequest) -> dict:
+def file_issues(job_id: str, body: FileIssuesRequest, request: Request) -> dict:
+    # Report pages are public/shareable links with no auth -- anyone who has one could
+    # otherwise call this repeatedly. Reuse the same per-IP cap as job creation, and
+    # (below) never re-file a finding that's already filed, so repeat calls can't spam
+    # duplicate issues even from different IPs.
     supabase = get_supabase()
+    enforce_scan_rate_limit(supabase, get_client_ip(request))
     job_result = supabase.table("jobs").select("*").eq("id", job_id).execute()
     if not job_result.data:
         raise HTTPException(status_code=404, detail="Job not found")
@@ -50,6 +56,8 @@ def file_issues(job_id: str, body: FileIssuesRequest) -> dict:
         if not finding_result.data:
             continue
         finding = finding_result.data[0]
+        if finding.get("filed_as_issue"):
+            continue  # idempotent: never file the same finding twice, no matter how many times this is called
         issue_url = file_issue(token, owner, repo, finding)
         supabase.table("findings").update(
             {"filed_as_issue": True, "issue_url": issue_url}
