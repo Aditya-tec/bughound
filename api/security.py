@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 
 BLOCKED_HOSTNAMES = {"localhost", "metadata.google.internal"}
 BLOCKED_HOSTNAME_SUFFIXES = (".local", ".internal")
+MAX_TARGET_URL_LENGTH = 2048  # practical browser/server URL length convention
 
 
 class SSRFValidationError(ValueError):
@@ -20,6 +21,9 @@ class SSRFValidationError(ValueError):
 
 
 def validate_public_target(url: str) -> None:
+    if len(url) > MAX_TARGET_URL_LENGTH:
+        raise SSRFValidationError(f"Target URL exceeds {MAX_TARGET_URL_LENGTH} characters")
+
     parsed = urlparse(url)
     if parsed.scheme not in ("http", "https"):
         raise SSRFValidationError("Target URL must use http or https")

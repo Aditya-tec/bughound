@@ -52,7 +52,16 @@ def file_issues(job_id: str, body: FileIssuesRequest, request: Request) -> dict:
 
     filed: list[dict] = []
     for finding_id in body.finding_ids:
-        finding_result = supabase.table("findings").select("*").eq("id", finding_id).execute()
+        # Scoped to job_id, not just id -- otherwise a caller could pass a finding_id
+        # from an unrelated job and have it filed against whatever repo this job_id
+        # resolves to.
+        finding_result = (
+            supabase.table("findings")
+            .select("*")
+            .eq("id", finding_id)
+            .eq("job_id", job_id)
+            .execute()
+        )
         if not finding_result.data:
             continue
         finding = finding_result.data[0]
