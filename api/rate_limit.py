@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException, Request
 
-DAILY_LIMIT_PER_IP = 5
+DAILY_LIMIT_PER_IP = 20
 
 
 def get_client_ip(request: Request) -> str:
