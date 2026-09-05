@@ -78,5 +78,13 @@ def app_callback(installation_id: int, state: str = Query(...)) -> dict:
 
 @router.post("/webhook")
 def webhook() -> dict:
-    """Stub for GitHub App lifecycle events (installation removed, etc.) — spec marks this optional."""
+    """Stub for GitHub App lifecycle events (installation removed, etc.) — spec marks this optional.
+
+    SECURITY: this is safe ONLY because it's currently a no-op. The moment this reads
+    the payload for anything beyond logging (e.g. deleting an `installations` row on
+    an "installation deleted" event), it MUST verify GitHub's X-Hub-Signature-256 HMAC
+    against a webhook secret first -- otherwise anyone can POST a forged event and
+    corrupt that table. Do not wire real behavior into this function without adding
+    that check in the same change.
+    """
     return {"status": "ignored"}

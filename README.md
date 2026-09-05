@@ -98,6 +98,27 @@ uses Groq text reasoning over recorded page states — no screenshots.
   creation and again right before the crawler connects, an owner-mode domain allowlist,
   per-IP rate limiting on the public API with idempotent issue-filing, and a cross-job
   data leak closed in the file-issues endpoint. Full writeup in §18 of the build spec.
+- **Went looking for CSRF protection on the GitHub App install flow, found the feature
+  was silently broken instead.** The install link set `?state=${jobId}`; GitHub echoes
+  that back as `state` on the callback redirect — but the callback handler's signature
+  expected a param literally named `job_id`, which GitHub never sends. Every real
+  installation would have linked to `null`, forever. Fixed the actual bug and added the
+  CSRF protection it needed anyway (a signed, 15-minute state token) in the same change
+  — verifying against actual behavior instead of just applying a described fix is what
+  surfaced this.
+- **Redirect-based SSRF, and the agent's own prompt-injection surface, closed
+  structurally, not by validating output.** Playwright follows HTTP redirects
+  transparently, so the entry-URL SSRF checks never saw a malicious mid-crawl 302 to an
+  internal IP — fixed with a route guard that re-validates every navigation hop, not
+  just the first. Separately, the explore loop used to hand the model a free-form
+  selector string to act on, built from page content it doesn't control — a page could
+  embed instructions-shaped text a human would never see but the model's context window
+  would. The fix isn't a smarter prompt: the model now picks only from a closed,
+  numbered index the agent's own code enumerated that same iteration, and any
+  index outside that set is ignored before it ever reaches `page.locator()`. Validating
+  the model's *choice* against a server-side allowlist, rather than trusting its
+  *output*, is the same shape as the SSRF fix — don't ask an untrusted actor to behave,
+  constrain what it's structurally able to do.
 
 ## Architecture
 
