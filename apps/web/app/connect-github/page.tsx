@@ -25,6 +25,7 @@ function ConnectGithubInner() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [filing, setFiling] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [installState, setInstallState] = useState<string | null>(null);
 
   useEffect(() => {
@@ -57,11 +58,13 @@ function ConnectGithubInner() {
   async function handleFile() {
     setFiling(true);
     setError(null);
+    setSuccess(null);
     try {
       await fileIssues(jobId, [...selected]);
       const data = await getJobReport(jobId);
       setFindings(data.findings);
       setSelected(new Set());
+      setSuccess("Issues filed successfully. Open the links below to view them on GitHub.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to file issues");
     } finally {
@@ -113,6 +116,7 @@ function ConnectGithubInner() {
       </p>
 
       {error && <p style={{ color: "var(--danger)" }}>{error}</p>}
+      {success && <p style={{ color: "#247a48" }}>{success}</p>}
 
       <div className="panel" style={{ marginTop: "1.25rem", marginBottom: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
