@@ -63,7 +63,18 @@ def load_page(page: Page, url: str, allowlist: DomainAllowlist) -> PageLoadResul
     page.on("response", on_response)
     page.on("pageerror", on_page_error)
 
-    page.goto(url, wait_until="networkidle")
+    # networkidle never fires on sites with continuous background activity (polling,
+    # analytics beacons, websockets) -- confirmed live: a real scan against an
+    # unrelated site crashed the whole job on Page.goto: Timeout 30000ms exceeded.
+    # A timeout here doesn't mean the page failed to load -- Playwright still
+    # navigates, it just never sees 500ms of network silence -- so proceed with
+    # whatever's there instead of losing the entire scan, and don't re-navigate
+    # (the console/response listeners are already attached above; a second goto()
+    # would duplicate every captured event).
+    try:
+        page.goto(url, wait_until="networkidle", timeout=15000)
+    except Exception:
+        pass
 
     anchors = page.eval_on_selector_all("a[href]", "els => els.map(e => e.href)")
     for href in anchors:
