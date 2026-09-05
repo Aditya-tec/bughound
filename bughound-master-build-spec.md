@@ -240,7 +240,7 @@ GitHub Actions runner (free compute)
 - `GET /api/jobs/{id}` — returns job status + findings (reads Supabase)
 - `GET /api/jobs/{id}/report` — public report data for scan mode
 - `POST /api/jobs/{id}/file-issues` — body `{finding_ids: [...]}` → uses PAT (owner mode) or stored installation token (Mode B+) to file selected issues via GitHub REST API, writes `issue_url` back to `findings`
-- `GET /api/github/app/callback` — receives `installation_id` after a user installs the GitHub App, stores it in `installations` linked to the job
+- `GET /api/github/app/callback` — configured as the GitHub App **Setup URL**; receives `installation_id` and signed `state` after installation, stores the selected repository in `installations` linked to the job, then redirects to the web app
 - `POST /api/github/webhook` — optional, for GitHub App lifecycle events (installation removed, etc.)
 
 Keep every one of these endpoints fast (sub-few-seconds) — all heavy work happens in the GitHub Actions runner, never inside a Vercel function.
@@ -250,7 +250,7 @@ Keep every one of these endpoints fast (sub-few-seconds) — all heavy work happ
 ## 10. GitHub App setup (for Mode B+)
 
 1. Go to `github.com/settings/apps/new`
-2. Name it (e.g. "BugHound"), set Homepage URL to your Vercel frontend URL, set Callback URL to `.../api/github/app/callback`
+2. Name it (e.g. "BugHound"), set Homepage URL to your Vercel frontend URL, and set **Setup URL** to `https://bughound-api.vercel.app/api/github/app/callback` (this is not the OAuth Callback URL)
 3. Under **Repository permissions**, grant only **Issues: Read & write** — nothing else
 4. Leave webhooks off unless you specifically need installation-removed events
 5. Under "Where can this GitHub App be installed?" choose **Any account** (public)
