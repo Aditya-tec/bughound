@@ -166,6 +166,17 @@ def run_tier_checks(state: ExplorerState) -> ExplorerState:
 
 
 def judge_findings(state: ExplorerState) -> ExplorerState:
+    # Real usage data: calling Gemini on every loop iteration burned 6-8 calls on a
+    # SINGLE moderately-interactive page -- three such scans back to back exhausted the
+    # entire 20/day free-tier quota before a 4th page ever got a vision review. Only the
+    # first page state (before any exploration) and the last (after exploration) are
+    # actually informative for visual-regression judgment -- an intermediate click
+    # rarely produces a new visual bug worth a fresh screenshot review, so skip those.
+    is_first_pass = len(state["page_states"]) <= 1
+    is_last_pass = state["done"] or state["action_budget"].remaining <= 0
+    if not (is_first_pass or is_last_pass):
+        return state
+
     if os.environ.get("GEMINI_API_KEY"):
         page = state["page"]
         screenshot = page.screenshot()

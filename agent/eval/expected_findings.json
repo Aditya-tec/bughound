@@ -38,12 +38,8 @@
     {
       "path": "/eval/tier5-security",
       "tier": 5,
-      "planted_bugs": [
-        {"label": "missing Content-Security-Policy header (site-wide gap)", "keywords": ["content-security-policy"]},
-        {"label": "missing X-Frame-Options header (site-wide gap)", "keywords": ["x-frame-options"]},
-        {"label": "missing X-Content-Type-Options header (site-wide gap)", "keywords": ["x-content-type-options"]}
-      ],
-      "_note": "Strict-Transport-Security is deliberately NOT in this list -- Vercel injects HSTS at the edge for every HTTPS deployment on this platform regardless of app code, so it's never actually missing here. An earlier version of this manifest wrongly expected it; confirmed via `curl -I` against the live site before removing it, not assumed."
+      "planted_bugs": [],
+      "_note": "This fixture originally relied on this deployment's own site-wide missing CSP/X-Frame-Options/X-Content-Type-Options headers as its 'planted bug' -- those were real gaps at the time. They were found and fixed in next.config.ts during a security hardening pass, which means this fixture's page now genuinely has all of them and can no longer demonstrate the bug it was designed to test. Left with zero planted bugs (rather than deleted) so the eval suite still runs a real scan against it and the history stays honest: the fixture didn't fail, the underlying gap it tested got closed. Strict-Transport-Security was never a valid expectation here either -- Vercel injects it at the edge for every HTTPS deployment regardless of app code."
     },
     {
       "path": "/eval/tier6-responsive",

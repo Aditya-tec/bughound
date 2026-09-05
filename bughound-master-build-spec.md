@@ -98,7 +98,13 @@ bughound/
 │
 ├── .github/
 │   └── workflows/
-│       └── run_scan.yml            # triggered via repository_dispatch
+│       ├── run_scan.yml            # triggered via repository_dispatch — the actual product
+│       └── ci.yml                  # added post-v1 — on every push/PR: web (tsc + build),
+│                                    # api (pytest + FastAPI import smoke test), agent (pytest)
+│
+├── api/tests/                       # added post-v1 — unit tests for security.py, owner_mode.py
+├── agent/tests/                     # added post-v1 — unit tests for security.py, guardrails.py,
+│                                    # and the Gemini-call gating in explorer_graph.py
 │
 ├── supabase/
 │   └── schema.sql
@@ -426,14 +432,60 @@ Addresses the gap where BugHound detected bugs but never proved its own accuracy
 
 **Run it:** `python agent/eval/run_eval.py` (defaults to the live `bughound-api`/`bughound-web` URLs; override with `--api-base`/`--site-base` for local testing). Results land in `agent/eval/last_run_results.json`.
 
-**Last real result (2026-09-03, first run, against the live production deployment):** 12/18 planted bugs found (67% recall) as literally scored by the strict tier+keyword matcher. Per tier: T1 4/4, T2 2/3, T3 0/1, T4 2/2, T5 3/4, T6 1/1, T7 0/2, T8 0/1.
+### Run 1 (2026-09-03): 12/18 (67%), corrected to 12/17 (71%)
 
-Breaking down the 6 misses (raw numbers, not massaged):
-- **1 was the eval's own bug, not the detector's.** T5 expected a missing HSTS header; Vercel injects `Strict-Transport-Security` at the edge for every HTTPS deployment on this platform regardless of app code, so it was never actually missing — confirmed with `curl -I` before removing it from the manifest. Corrected recall: **12/17 (71%)**.
-- **2 were real bugs the system found, just filed under a different tier than the ground truth assumed.** Gemini's vision judge independently caught the T8 fixture's dead-end "Continue" button ("Dead-end navigation on 'Continue' button", "Misleading 'Continue' call-to-action") and the T2 fixture's unlabeled input — both filed as tier-7 visual/UX findings rather than tier-2 axe-core or tier-8 flow findings. The bug was genuinely caught; the eval's strict per-tier scoring didn't credit it. Left as-is rather than loosened, since inflating recall by loosening the matcher after seeing the results would defeat the point of running an eval at all.
-- **3 are real, unresolved gaps**, in order of concern:
-  1. Tier 3 (LCP) fired on *no* run in this batch, not just its own fixture — worth checking whether the web-vitals capture window is shorter than the ~2.2s artificial delay used to force a slow LCP.
-  2. Tier 2's axe-core check didn't flag the unlabeled `<input>` on its own fixture (Gemini caught it independently on a different page, see above) — worth checking why the `label`-family axe rule didn't fire on a bare `<input>` with no `<label>`/`aria-label`.
-  3. The T7 fixture's own page (Lorem-ipsum copy + non-functional "Buy Now" CTA) produced zero tier-7 findings on itself, despite Gemini catching similar things on other pages in the same batch — could be quota (this batch ran late in the day's Gemini usage), could be a genuine vision-judgment miss on that specific screenshot. Undetermined without another run on a quota-fresh day.
+Per tier: T1 4/4, T2 2/3, T3 0/1, T4 2/2, T5 3/4, T6 1/1, T7 0/2, T8 0/1. Full breakdown
+in git history; the short version is 1 miss was the eval's own wrong assumption (HSTS —
+Vercel injects it automatically), 2 were real detections filed under an unexpected tier
+(Gemini's vision judge independently caught bugs planted for T2 and T8, just tagged them
+T7), and 3 were genuine open questions carried into run 2 below.
+
+### Run 2 (2026-09-05), after investigating and fixing every open question from run 1
+
+Each of run 1's 3 "unresolved gaps" was root-caused with a real test before touching any
+code — not guessed at:
+
+1. **Tier 3 (LCP) fired on zero runs — root cause found and fixed.** `web-vitals`'
+   `onLCP`/`onCLS` callbacks only fire on *finalization* (a visibility change or
+   `pagehide` event) by default. Neither happens during a single automated Playwright
+   page load, so the callback simply never fired — on any real scan, not just this
+   fixture, since the crawler was shipped. Fixed with `reportAllChanges: true`, which
+   reports on every update instead of waiting for an event that never comes. Verified
+   directly against the live fixture before/after: 0 findings → `LCP is 4576ms`.
+2. **Tier 2 missed the unlabeled `<input>` — the eval fixture's assumption was wrong,
+   not the detector.** Tested axe-core directly against the exact markup: a
+   placeholder-only input **passes** axe's `label` rule, because placeholder text counts
+   as a fallback accessible name per the browser's accname computation — confirmed with
+   a real axe-core run, then confirmed the opposite (a true labelless input fails
+   `label` with `impact: critical`) once the placeholder was removed. Fixed the fixture,
+   not the checker.
+3. **The T7 fixture got zero tier-7 findings on itself — root cause found: quota, not
+   judgment quality.** Checked `runs_meta.gemini_calls` across every job in the batch:
+   the first 3 fixtures alone burned 22 Gemini calls, already past the 20/day free-tier
+   cap, before a 4th page was ever screenshotted. Root cause: `explorer_graph.judge_findings`
+   called Gemini on *every* loop iteration (up to 8 per scan) instead of periodically.
+   Fixed to call it only on the first pass (before any exploration) and the last
+   (after exploration ends) — a ~4x reduction, unit-tested
+   (`agent/tests/test_explorer_graph.py`) since same-day quota exhaustion made a clean
+   live re-run impossible until quota resets.
+
+One more thing run 2 surfaced organically: the T5 fixture's planted bug (missing
+CSP/X-Frame-Options/X-Content-Type-Options) **no longer exists** — those exact headers
+were found missing and fixed site-wide in `next.config.ts` during the security hardening
+pass in §18, before this eval run. The fixture now correctly shows nothing missing,
+because the gap it was designed to demonstrate got closed in the meantime. Left in the
+manifest with an empty planted-bugs list rather than deleted, so this stays visible as
+what it is — a fixture retired by its own bug getting fixed, not a detector failure.
+
+**Run 2 result: 11/14 scored planted bugs (79%)**, T5 excluded from the denominator
+(0 planted, 0 required). Per tier: T1 4/4, T2 3/3, T3 1/1, T4 2/2, T5 n/a, T6 1/1, T7 0/2,
+T8 0/1. T7/T8 still show as misses in this run's raw numbers for the same reason as
+before — same-day quota exhaustion, now understood and fixed at the code level, but not
+yet reverifiable live until the daily quota resets. A same-day rerun after quota resets
+is the natural next step to confirm the Gemini-call reduction actually holds T7/T8
+recall up under real conditions, not just in the unit tests.
 
 Re-run with `python agent/eval/run_eval.py`; results overwrite `agent/eval/last_run_results.json` each time.
+
+
+

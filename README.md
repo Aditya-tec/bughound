@@ -1,67 +1,135 @@
 # BugHound
 
-Autonomous AI agent that explores websites, detects bugs across 8 categories, and auto-files GitHub issues (owner mode) or generates a shareable report (scan mode). Full spec: [bughound-master-build-spec.md](bughound-master-build-spec.md).
+An autonomous agent that explores a live website the way a real user would — clicking,
+scrolling, filling forms — and reports real bugs across 8 categories: functional,
+accessibility, performance, SEO, security hygiene, responsive design, visual/UX, and
+multi-step flow consistency. On sites you own, it auto-files GitHub issues. On anyone
+else's, it produces a read-only, shareable report and never touches their repo.
 
-## Status
+**Live:** [bughound-web.vercel.app](https://bughound-web.vercel.app) · **Full build spec:** [bughound-master-build-spec.md](bughound-master-build-spec.md)
 
-**Scan mode works end-to-end for real** — a live GitHub Actions run against `https://example.com` completed with `status: completed`, produced 20 findings across tiers 2/4/5/6/7/8, uploaded working screenshots to Supabase Storage, and wrote real `gemini_calls`/`tokens_used` to `runs_meta`. That took 4 real CI runs to get right — see "Bugs found and fixed via real runs" below. Owner mode (auto-filing) and Mode B+ are still unproven; Vercel isn't deployed yet.
+## Why this exists
 
-### `supabase/`
-- `schema.sql` — `jobs`, `findings`, `runs_meta`, `installations` tables (spec section 7), applied to a live project
-- The `screenshots` bucket exists and is confirmed serving real public PNGs (verified via direct HTTP fetch of an uploaded screenshot)
+Momentic and Octomind sell versions of this. This is the open-source, self-hostable,
+$0-forever version — no card required anywhere in the stack, because the expensive part
+(headless browser automation) runs on GitHub Actions' free compute for public repos, not
+on a paid always-on server. Vercel's serverless functions only orchestrate: create a job
+row, fire a dispatch event, read Supabase, call the GitHub API. LLM reasoning is split
+across two free tiers by workload — Groq for the frequent, cheap text-reasoning calls
+(page planning, flow-consistency judgment), Gemini only for the handful of calls per run
+that actually need vision (screenshot judgment).
 
-### `api/` (FastAPI on Vercel)
-All endpoints from the spec's API contract (section 9) are implemented and verified to boot/route correctly with `TestClient`:
-- `POST /api/jobs` — inserts a `jobs` row, fires `repository_dispatch` via `github_dispatch.py`
-- `GET /api/jobs/{id}`, `GET /api/jobs/{id}/report`
-- `POST /api/jobs/{id}/file-issues` — owner mode (PAT) or Mode B+ (GitHub App installation token via `github_app_auth.py`)
-- `GET /api/github/app/callback`, `POST /api/github/webhook`
-- `vercel.json` routes all `/api/*` to `api/index.py` so Vercel treats it as one function, not one per file
+## The three modes
 
-### `agent/` (runs only inside GitHub Actions)
-All 8 tiers, guardrails, the crawler, and the LangGraph explore loop are implemented (spec sections 11–12):
-- `guardrails.py` — robots.txt, rate limiting, action budget, domain allowlist, run timeout
-- `crawler.py` — Playwright page load + console/network capture + link extraction
-- `checks/tier1..tier6` — deterministic checks (functional, a11y via axe-core, performance via web-vitals, SEO, security headers, responsive)
-- `checks/tier7_visual_ux.py` — Gemini vision judgment (uses the current `google-genai` SDK, not the deprecated `google-generativeai`)
-- `checks/tier8_flow.py` — Groq-based multi-step flow consistency check
-- `explorer_graph.py` — LangGraph plan→act→check→judge loop
-- `github_issue_filer.py`, `supabase_client.py`, `main.py` (entrypoint)
-- `agent/requirements.txt` is pinned to a set that installs cleanly together (`google-genai` needs `httpx>=0.28.1`, which forced a `supabase` bump to 2.31.0 — verified with a clean venv install)
+| Mode | Who it's for | What happens |
+|---|---|---|
+| **Scan** | Anyone, on any URL | Fully read-only. Crawls and interacts with the page, produces a shareable report. Nothing is ever written anywhere. |
+| **Owner** | The operator, on their own domains | Auto-files every finding as a GitHub issue — no selection step. Locked server-side to an operator-configured domain allowlist; rejected outright for anything else. |
+| **Connect GitHub** (Mode B+) | A scan-mode report viewer who owns that site | Installs a narrowly-scoped GitHub App (`issues: write` only) on **their own** repo — they pick which one via GitHub's own install screen — then selectively files the findings they choose. BugHound never holds a credential to their account; GitHub's own consent screen is the trust boundary, not something built in-house. |
 
-### `.github/workflows/run_scan.yml`
-Dispatches on `repository_dispatch: run-scan`, installs `agent/requirements.txt` + Playwright's Chromium, runs `agent/main.py` with the job's secrets/env.
+## The 8 tiers
 
-### `apps/web/` (Next.js, App Router)
-- `/` — URL submission form (scan vs. owner mode)
-- `/scan/[jobId]` — live polling view
-- `/reports/[jobId]` — public read-only report
-- `/connect-github` — Mode B+ GitHub App install + consent-based issue filing UI
+1. **Functional** — uncaught JS exceptions, failed requests, broken links/images, forms that submit with empty required fields and no validation
+2. **Accessibility** — axe-core: missing alt text, insufficient contrast, unlabeled inputs, ARIA issues
+3. **Performance** — Core Web Vitals (LCP/CLS) via the `web-vitals` library, slow API responses
+4. **SEO** — missing/duplicate title & H1, missing canonical, broken Open Graph, missing sitemap.xml/robots.txt
+5. **Security hygiene** — passive only: missing CSP/X-Frame-Options/HSTS/X-Content-Type-Options, cookie flags, mixed content
+6. **Responsive** — missing viewport meta, horizontal overflow, sub-44px touch targets at 3 breakpoints
+7. **Visual/UX** — Gemini vision judgment: layout breakage, leftover placeholder content, misleading CTAs, dead-end navigation
+8. **Flow consistency** — LangGraph-tracked multi-step state across pages: broken checkout/signup flows, back-button state loss
 
-Verified: `tsc --noEmit` clean, `npm run build` produces all 5 routes successfully, and the
-dev server actually serves the landing page (confirmed via curl — real HTTP 200 + rendered
-markup, not just a successful build).
+Tiers 1–6 are deterministic (free libraries, no LLM). Tier 7 uses Gemini vision. Tier 8
+uses Groq text reasoning over recorded page states — no screenshots.
 
-### `fixtures/broken-test-site/`
-A deliberately-broken static page (`index.html` + `step2.html`) covering at least one issue per tier — console error, failed fetch, broken image/links, missing alt text, low contrast, unlabeled required field, no viewport meta, sub-44px touch target, horizontal overflow, missing meta description/canonical/OG tags, duplicate H1, leftover "Lorem ipsum", misleading CTA, and a 2-step flow that silently drops state. Serve it locally (`python -m http.server` from that folder) once the crawler is pointed at a live browser, to satisfy the validation checklist's "known-broken test page" item.
+## Does it actually work? Proof, not claims
 
-## Bugs found and fixed via real runs
+- **Real issues, filed automatically**: a single owner-mode run against a live site
+  auto-filed 9 real GitHub issues on this repo with zero manual triage —
+  [issue #1](https://github.com/Aditya-tec/bughound/issues/1),
+  [#2](https://github.com/Aditya-tec/bughound/issues/2),
+  [#5](https://github.com/Aditya-tec/bughound/issues/5),
+  [#8](https://github.com/Aditya-tec/bughound/issues/8), and 5 more. They're live; click
+  through.
+- **An eval suite, not a vibe check**: `apps/web/app/eval/` hosts 8 deliberately-broken
+  fixture pages, one per tier, each with documented planted bugs
+  (`agent/eval/expected_findings.json`). `agent/eval/run_eval.py` scans all 8 for real
+  against the live deployment and scores recall against that ground truth — not a demo
+  video, an actual repeatable measurement. Latest run: see
+  [`agent/eval/last_run_results.json`](agent/eval/last_run_results.json) and §19 of the
+  build spec for the full breakdown, including the misses and which ones turned out to
+  be the eval's own bugs rather than the detector's.
+- **A real security pass, not a checklist**: SSRF guard (checked at job creation and
+  independently again right before the crawler connects), an owner-mode domain
+  allowlist, per-IP rate limiting on the public API, and — the one that mattered most —
+  Supabase Row Level Security. The frontend's public anon key could, until this was
+  caught and fixed, read and write every table directly via PostgREST, completely
+  bypassing every check in the API layer. Verified exploitable (inserted a real row,
+  updated a real row, using nothing but the public key) before fixing it, and verified
+  blocked after. Full writeup in §18 of the build spec.
 
-Four live CI runs against `example.com` (not local mocks) surfaced four real bugs, each fixed and verified before moving on:
+## Architecture
 
-1. **CSP blocked CDN script injection** — `page.add_script_tag(url=...)` inserts a real `<script>` element, which is subject to the *target site's own* CSP. `example.com`'s CSP blocks `cdnjs.cloudflare.com`, so tier 2 (axe-core) and tier 3 (web-vitals) failed on any CSP-hardened site. Fixed by fetching the library once and injecting via `page.evaluate()` (`agent/inject.py`), which bypasses page CSP. Verified against a purpose-built `script-src 'self'` test page.
-2. **Explore loop ignored the domain allowlist** — `crawler.py` and the tier 1 link checker respect it, but `explorer_graph.execute_action` didn't check it before clicking. A real run followed a link off `example.com` onto `iana.org` and then `afrinic.net`. Fixed by reverting any click that lands off-domain; verified with a two-port local test simulating cross-domain navigation.
-3. **Action budget too slow for real LLM latency** — 15 actions (the spec's example figure) at ~25s/iteration with real Groq+Gemini calls blew through the 300s timeout guardrail (which itself fired correctly — the run failed cleanly, didn't hang). Dropped the default to 8.
-4. **One LLM failure crashed the whole run** — Gemini's free tier caps `gemini-2.5-flash` at 20 requests/day; hitting that quota mid-run raised an uncaught exception that discarded every tier 1-6 finding already recorded. Fixed all three LLM call sites (tier 7 Gemini, tier 8 Groq, the explore loop's Groq planner) to log and degrade to empty instead of crashing.
+```
+Next.js dashboard (Vercel)
+   │ user submits target_url + picks mode
+   ▼
+FastAPI functions (Vercel, same free tier)
+   │ validates (SSRF, owner-mode allowlist, rate limit) → inserts a `jobs` row →
+   │ fires repository_dispatch
+   ▼
+GitHub Actions runner (free compute for public repos)
+   │ Playwright + LangGraph agent, Groq for text reasoning, Gemini for vision
+   │ crawls the target, runs all 8 tiers, records findings immediately (not batched,
+   │ so a timeout still leaves partial results)
+   ▼
+   ├─→ Supabase (jobs/findings/screenshots — dashboard polls this live)
+   └─→ mode=owner  → GitHub REST API (operator's PAT)         → issues filed automatically
+       mode=scan   → nothing filed, report renders from Supabase
+       Connect GitHub → GitHub App installation token, issues:write only → user-selected findings filed
+```
 
-Also fixed two silent gaps caught by re-reading the schema against the code: `findings.screenshot_url` was never populated (screenshots were captured but discarded), and `runs_meta.gemini_calls`/`tokens_used` stayed at their defaults forever. Both wired up via `agent/metrics.py` and `supabase_client.upload_screenshot`.
+Two Vercel projects, not one — `bughound-web` (Next.js) and `bughound-api` (FastAPI,
+Python serverless) — because combining a Next.js frontend and a Python API in a single
+Vercel project runs into framework-detection conflicts; splitting them is the documented
+fallback and turned out simpler in practice.
 
-## Next steps
+## Repo layout
 
-1. **Vercel** — not deployed. Needed to actually exercise `POST /api/jobs` and the dashboard against live data instead of direct script calls.
-2. **Owner mode** — needs a `GITHUB_PAT` (deferred on purpose) to prove real issue-filing.
-3. **Mode B+** — needs a registered GitHub App (github.com/settings/apps/new, can't be done via API).
-4. Run against `fixtures/broken-test-site/` the same way `example.com` was tested, to confirm all 8 tiers fire on a known-broken page (checklist item 1) — tiers 1/2/4/6 already proven against it locally pre-CI; 3/5/7/8 only proven against `example.com` so far.
+```
+apps/web/       Next.js frontend (Vercel) — dashboard, live scan view, public reports,
+                 Connect GitHub flow, and apps/web/app/eval/ (the 8 eval fixtures)
+api/            FastAPI serverless functions (Vercel) — job orchestration, GitHub App
+                 auth, issue filing. Never runs an LLM call.
+agent/          Playwright + LangGraph agent — runs ONLY inside GitHub Actions.
+                 agent/checks/tier{1-8}_*.py, agent/eval/ (the eval runner)
+supabase/       schema.sql + migrations/ (run once each via the Supabase SQL Editor —
+                 no direct Postgres credentials are held anywhere in this stack, only
+                 the REST API, so DDL can't be scripted)
+.github/workflows/run_scan.yml   Triggered by repository_dispatch, never on a schedule
+```
+
+## Honest comparison
+
+|  | Momentic / Octomind | BugHound |
+|---|---|---|
+| Cost | Paid, credit card required | $0, no card anywhere in the stack |
+| Compute | Their infrastructure | GitHub Actions (free for public repos) |
+| Self-hostable | No | Yes — it's this repo |
+| Issue filing | Built-in integrations | Scoped GitHub App (Mode B+) or your own PAT (owner mode), never broader access than `issues: write` |
+| Novelty pitch | — | None claimed. This is "the open-source, $0 version of what they charge for," not a new idea. |
+
+## Tech stack
+
+| Layer | Tool |
+|---|---|
+| Frontend | Next.js on Vercel |
+| Backend API | FastAPI as Python serverless functions on Vercel |
+| Heavy compute | GitHub Actions (Playwright, LangGraph) |
+| Text reasoning | Groq |
+| Vision | Google Gemini |
+| Accessibility | axe-core via CDN injection + `page.evaluate` |
+| DB + storage | Supabase (Postgres + Storage), RLS-locked |
+| Issue filing | GitHub REST API — PAT (owner mode) or GitHub App installation token (Mode B+) |
 
 ## Local dev
 
@@ -74,13 +142,12 @@ cp api/.env.example api/.env    # fill in SUPABASE_URL / SUPABASE_SERVICE_ROLE_K
 cd api && uvicorn index:app --reload
 ```
 
-**Agent (once you have Supabase/Groq/Gemini credentials):**
+**Agent** (needs Supabase/Groq/Gemini credentials):
 ```
 python -m venv .venv-agent
 source .venv-agent/Scripts/activate
 pip install -r agent/requirements.txt
 playwright install --with-deps chromium
-cp agent/.env.example agent/.env  # if you add one; otherwise export the vars from spec section 6
 cd agent && python main.py --job-id <uuid> --target-url https://example.com --mode scan
 ```
 
@@ -91,3 +158,26 @@ npm install
 cp .env.example .env.local
 npm run dev
 ```
+
+**Eval suite** (scans the live deployment for real, no local server needed):
+```
+python agent/eval/run_eval.py
+```
+
+## What's not finished yet
+
+Tracked honestly in the build spec rather than glossed over here:
+- Tiers 7/8's remaining eval misses are root-caused (Gemini's daily quota was being
+  exhausted by the 3rd fixture in an 8-fixture batch — fixed at the code level by
+  calling Gemini only on the first/last exploration pass instead of every iteration)
+  but not yet reverified with a clean live re-run, since fixing it used up the same
+  day's quota. §19 has the full story.
+- No technical writeup video (Loom) yet
+- CI now runs on every push (`.github/workflows/ci.yml`) but coverage is limited to the
+  pure-logic modules (SSRF guard, owner-mode allowlist, action budget, domain
+  allowlist, Gemini-call gating) — nothing exercises the FastAPI routes or the agent's
+  Playwright-driven checks themselves yet, since those need real browser/DB
+  infrastructure rather than unit-level mocks.
+
+See [bughound-master-build-spec.md](bughound-master-build-spec.md) §16 for the full,
+currently-accurate validation checklist.
