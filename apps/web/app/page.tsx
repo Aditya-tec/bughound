@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createJob, type Mode } from "@/lib/api";
 import { TIERS } from "@/lib/tiers";
 import FindingsShowcase from "@/components/FindingsShowcase";
+import RealIssuesShowcase from "@/components/RealIssuesShowcase";
 
 export default function HomePage() {
   const router = useRouter();
@@ -117,6 +118,20 @@ export default function HomePage() {
           </h2>
         </div>
         <FindingsShowcase />
+      </section>
+
+      <section className="tight">
+        <div className="section-head">
+          <span className="eyebrow">Filed automatically, not staged</span>
+          <h2 style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", marginTop: "0.9rem" }}>
+            Owner mode found these on its own repo.
+          </h2>
+          <p className="muted" style={{ marginTop: "0.75rem" }}>
+            A single owner-mode run against a real site auto-filed 9 real GitHub issues —
+            zero manual triage. Click through, they&apos;re live.
+          </p>
+        </div>
+        <RealIssuesShowcase />
       </section>
 
       <section>
