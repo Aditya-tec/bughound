@@ -8,6 +8,33 @@ else's, it produces a read-only, shareable report and never touches their repo.
 
 **Live:** [bughound-web.vercel.app](https://bughound-web.vercel.app) · **Full build spec:** [bughound-master-build-spec.md](bughound-master-build-spec.md)
 
+## Found and fixed a critical RLS gap that let the public anon key bypass every server-side check
+
+This is the finding worth reading first. The frontend ships a public Supabase anon key —
+by design, Supabase expects that key to be public, protected entirely by Row Level
+Security policies on the tables it can touch. RLS was never enabled on this project's
+tables. That's not a theoretical gap: it was verified exploitable before it was fixed,
+not just inferred from a checklist.
+
+Using nothing but the anon key already sitting in the shipped client bundle, I inserted a
+real row into `jobs` and updated a real row in `findings` directly via Supabase's
+PostgREST API — no auth, no API call, completely bypassing the SSRF guard, the
+owner-mode domain allowlist, and the rate limiter, because none of those checks live in
+the database, only in the FastAPI layer in front of it. Every other security control in
+this project was moot for anyone willing to open dev tools and talk to Supabase directly.
+
+Fixed by enabling RLS with zero policies (default-deny for `anon`/`authenticated`) across
+all four tables, verified safe because the frontend never talks to Supabase directly —
+every real read/write already goes through the API's service-role key, which always
+bypasses RLS by design. Reverified after the fix with the identical attack: the same
+insert now returns `42501: new row violates row-level security policy` and the same
+update is a confirmed no-op. Full writeup, including the exact requests, in
+[bughound-master-build-spec.md](bughound-master-build-spec.md) §18.
+
+This exact bug — a public anon key with RLS off — ships in a large number of real
+production Supabase apps. It's the kind of gap that's invisible until someone actually
+tries the anon key against the tables instead of trusting that "the API handles it."
+
 ## Why this exists
 
 Momentic and Octomind sell versions of this. This is the open-source, self-hostable,
@@ -50,6 +77,15 @@ uses Groq text reasoning over recorded page states — no screenshots.
   [#5](https://github.com/Aditya-tec/bughound/issues/5),
   [#8](https://github.com/Aditya-tec/bughound/issues/8), and 5 more. They're live; click
   through.
+- **Real findings on a real, unrelated project**: a scan-mode run against a second live
+  deployment (not a fixture, not this repo) surfaced 25 genuine findings across 5 tiers
+  in one pass — accessibility violations, missing SEO/security headers, sub-44px touch
+  targets, real vision-judged UX issues.
+- **A crawler crash, found by dogfooding against a third real project**: a scan against
+  another live deployment crashed the entire job — `Page.goto: Timeout 30000ms
+  exceeded` — because that site never satisfies Playwright's `networkidle` wait
+  condition (continuous polling/analytics keep the network busy indefinitely). Root
+  caused, fixed, and locked in with a regression test the same day it was found.
 - **An eval suite, not a vibe check**: `apps/web/app/eval/` hosts 8 deliberately-broken
   fixture pages, one per tier, each with documented planted bugs
   (`agent/eval/expected_findings.json`). `agent/eval/run_eval.py` scans all 8 for real
@@ -58,14 +94,10 @@ uses Groq text reasoning over recorded page states — no screenshots.
   [`agent/eval/last_run_results.json`](agent/eval/last_run_results.json) and §19 of the
   build spec for the full breakdown, including the misses and which ones turned out to
   be the eval's own bugs rather than the detector's.
-- **A real security pass, not a checklist**: SSRF guard (checked at job creation and
-  independently again right before the crawler connects), an owner-mode domain
-  allowlist, per-IP rate limiting on the public API, and — the one that mattered most —
-  Supabase Row Level Security. The frontend's public anon key could, until this was
-  caught and fixed, read and write every table directly via PostgREST, completely
-  bypassing every check in the API layer. Verified exploitable (inserted a real row,
-  updated a real row, using nothing but the public key) before fixing it, and verified
-  blocked after. Full writeup in §18 of the build spec.
+- **A real security pass beyond RLS**: an SSRF guard checked independently at job
+  creation and again right before the crawler connects, an owner-mode domain allowlist,
+  per-IP rate limiting on the public API with idempotent issue-filing, and a cross-job
+  data leak closed in the file-issues endpoint. Full writeup in §18 of the build spec.
 
 ## Architecture
 
@@ -163,6 +195,18 @@ npm run dev
 ```
 python agent/eval/run_eval.py
 ```
+
+## Deliberately accepted, not overlooked
+
+`npm audit` flags 2 vulnerabilities (1 high) in `postcss`, pulled in transitively by
+Next.js — both are about processing attacker-controlled CSS content or
+`sourceMappingURL` comments. Checked before deciding to defer: `npm ls postcss` shows
+it's used only inside Next's own internal build pipeline, there's no `postcss.config.js`
+and no direct usage anywhere in this app's code, and it only ever processes this
+project's own static `globals.css` at build time — never user-supplied CSS or an
+attacker-controlled source-map path at runtime. Not reachable in this app's actual usage.
+The fix requires a Next 16 major-version upgrade, which is a bigger, less-understood risk
+to take on this late in the build than a confirmed-unreachable transitive advisory.
 
 ## What's not finished yet
 
