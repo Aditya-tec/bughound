@@ -2,5 +2,5 @@ playwright==1.62.0
 langgraph==1.2.11
 groq==1.7.0
 google-genai==2.21.0
-requests==2.33.0
+requests==2.34.2
 supabase==2.31.0
