@@ -1,5 +1,8 @@
+import os
+
 import requests
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import RedirectResponse
 
 from api.github_app_auth import get_installation_token
 from api.oauth_state import InvalidStateError, sign_state, verify_state
@@ -42,7 +45,7 @@ def _resolve_repo_full_name(installation_id: int) -> str:
 
 
 @router.get("/app/callback")
-def app_callback(installation_id: int, state: str = Query(...)) -> dict:
+def app_callback(installation_id: int, state: str = Query(...)) -> RedirectResponse:
     """GitHub redirects here after a user installs the App (Mode B+, spec section 10).
 
     GitHub echoes back whatever was passed as `state` on the install link -- it does
@@ -73,7 +76,11 @@ def app_callback(installation_id: int, state: str = Query(...)) -> dict:
             "linked_job_id": job_id,
         }
     ).execute()
-    return {"status": "connected", "installation_id": installation_id, "repo_full_name": repo_full_name}
+    web_url = os.environ.get("BUGHOUND_WEB_URL", "").rstrip("/")
+    return RedirectResponse(
+        url=f"{web_url}/connect-github?jobId={job_id}&connected=true",
+        status_code=303,
+    )
 
 
 @router.post("/webhook")
