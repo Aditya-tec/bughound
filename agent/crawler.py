@@ -1,11 +1,12 @@
 """Playwright-driven crawler: loads a page, extracts internal links, tracks console/network events."""
 
 from dataclasses import dataclass, field
-from urllib.parse import urldefrag
+from urllib.parse import urldefrag, urlparse
 
 from playwright.sync_api import Page, ConsoleMessage, Response
 
 from guardrails import USER_AGENT, DomainAllowlist
+from security import is_public_hostname
 
 
 @dataclass
@@ -93,6 +94,32 @@ def load_page(page: Page, url: str, allowlist: DomainAllowlist) -> PageLoadResul
     return result
 
 
+def install_ssrf_route_guard(page: Page) -> None:
+    """Blocks every main-frame navigation whose destination resolves off the public
+    internet -- including mid-crawl redirects, which the entry-URL SSRF checks in
+    agent/security.py and api/security.py never see. A malicious page can pass the
+    initial validation, then 302 to http://169.254.169.254/ or an internal IP;
+    Playwright follows redirects transparently during page.goto() and page.click(),
+    so without this, that hop reaches the target unchecked. Applied once per page via
+    page.route(), so it covers every navigation for the session -- the initial load,
+    every redirect hop within it, and every later click-driven navigation in the
+    explore loop.
+    """
+
+    def handle_route(route) -> None:
+        request = route.request
+        if request.is_navigation_request() and request.frame == page.main_frame:
+            hostname = urlparse(request.url).hostname or ""
+            if not hostname or not is_public_hostname(hostname):
+                route.abort()
+                return
+        route.continue_()
+
+    page.route("**/*", handle_route)
+
+
 def new_context_page(browser):
     context = browser.new_context(user_agent=USER_AGENT)
-    return context, context.new_page()
+    page = context.new_page()
+    install_ssrf_route_guard(page)
+    return context, page

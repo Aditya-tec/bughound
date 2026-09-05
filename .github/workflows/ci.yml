@@ -31,7 +31,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dependencies
-        run: pip install -r api/requirements.txt pytest
+        run: pip install -r api/requirements.txt pytest pip-audit
+      - name: Dependency audit
+        run: pip-audit -r api/requirements.txt
       - name: Unit tests
         run: python -m pytest api/tests/ -v
       - name: Import smoke test
@@ -47,7 +49,11 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: Install dependencies (no browser binaries needed for unit tests)
-        run: pip install -r requirements.txt pytest
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest pip-audit
+      - name: Dependency audit
+        run: pip-audit -r requirements.txt
+      - name: Install Chromium (only test_ssrf_route_guard.py needs a real browser)
+        run: playwright install --with-deps chromium
       - name: Unit tests
         run: python -m pytest tests/ -v

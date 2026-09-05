@@ -22,9 +22,20 @@ const SECURITY_HEADERS = [
   },
 ];
 
+// Report/scan pages render whatever a scan found on someone else's site -- if a page
+// like that ever got indexed, "example.com has 15 security issues" showing up in
+// search results is a reputational problem for the site owner, not BugHound. Job ids
+// are already unguessable UUIDs, so this is defense in depth on top of that, not the
+// only thing stopping indexing.
+const NOINDEX_HEADERS = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
+
 const nextConfig: NextConfig = {
   async headers() {
-    return [{ source: "/(.*)", headers: SECURITY_HEADERS }];
+    return [
+      { source: "/(.*)", headers: SECURITY_HEADERS },
+      { source: "/reports/:path*", headers: NOINDEX_HEADERS },
+      { source: "/scan/:path*", headers: NOINDEX_HEADERS },
+    ];
   },
 };
 

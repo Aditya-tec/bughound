@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { fileIssues, getJobReport, type Finding } from "@/lib/api";
+import { fileIssues, getGithubInstallState, getJobReport, type Finding } from "@/lib/api";
 import FindingsList from "@/components/FindingsList";
 import { tierMeta } from "@/lib/tiers";
 
@@ -25,6 +25,7 @@ function ConnectGithubInner() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [filing, setFiling] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [installState, setInstallState] = useState<string | null>(null);
 
   useEffect(() => {
     if (!jobId) return;
@@ -32,6 +33,17 @@ function ConnectGithubInner() {
       .then((data) => setFindings(data.findings))
       .catch((err) => setError(err instanceof Error ? err.message : "Failed to load findings"));
   }, [jobId]);
+
+  useEffect(() => {
+    // The install link's `state` param has to be a signed token from the API, not the
+    // raw job id -- GitHub echoes it back untouched on the callback, so an unsigned
+    // job id would let anyone link their own installation to someone else's job by
+    // hand-crafting that callback URL.
+    if (!jobId || connected) return;
+    getGithubInstallState(jobId)
+      .then((data) => setInstallState(data.state))
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to prepare the install link"));
+  }, [jobId, connected]);
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -67,9 +79,10 @@ function ConnectGithubInner() {
     );
   }
 
-  const installUrl = `https://github.com/apps/${GITHUB_APP_SLUG}/installations/new?state=${jobId}`;
-
   if (!connected) {
+    const installUrl = installState
+      ? `https://github.com/apps/${GITHUB_APP_SLUG}/installations/new?state=${encodeURIComponent(installState)}`
+      : null;
     return (
       <main className="narrow">
         <div className="eyebrow">Mode B+ · consent-based filing</div>
@@ -80,8 +93,11 @@ function ConnectGithubInner() {
             exactly which repo via GitHub&apos;s own install screen — BugHound only ever gets{" "}
             <code>issues:write</code> on that one repo.
           </p>
-          <a href={installUrl}>
-            <button className="btn-primary" style={{ marginTop: "0.5rem" }}>Connect GitHub →</button>
+          {error && <p style={{ color: "var(--danger)" }}>{error}</p>}
+          <a href={installUrl ?? undefined} aria-disabled={!installUrl}>
+            <button className="btn-primary" style={{ marginTop: "0.5rem" }} disabled={!installUrl}>
+              {installUrl ? "Connect GitHub →" : "Preparing…"}
+            </button>
           </a>
         </div>
       </main>

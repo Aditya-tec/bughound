@@ -68,3 +68,7 @@ export function fileIssues(jobId: string, findingIds: string[]): Promise<unknown
     body: JSON.stringify({ finding_ids: findingIds }),
   });
 }
+
+export function getGithubInstallState(jobId: string): Promise<{ state: string }> {
+  return apiFetch(`/api/github/app/install-state?job_id=${encodeURIComponent(jobId)}`);
+}
