@@ -28,8 +28,11 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GITHUB_PAT: ${{ secrets.PAT_GITHUB }}
           OWNER_MODE_REPO: ${{ github.repository }}
+          JOB_ID: ${{ github.event.client_payload.job_id }}
+          TARGET_URL: ${{ github.event.client_payload.target_url }}
+          SCAN_MODE: ${{ github.event.client_payload.mode }}
         run: |
           python main.py \
-            --job-id "${{ github.event.client_payload.job_id }}" \
-            --target-url "${{ github.event.client_payload.target_url }}" \
-            --mode "${{ github.event.client_payload.mode }}"
+            --job-id "$JOB_ID" \
+            --target-url "$TARGET_URL" \
+            --mode "$SCAN_MODE"

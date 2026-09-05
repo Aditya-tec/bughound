@@ -56,7 +56,7 @@ def check_flow_consistency(page_states: list[dict], metrics: RunMetrics | None =
     except Exception as exc:
         # Same principle as tier 7: a Groq failure here must not discard everything
         # already recorded for this run.
-        print(f"tier8: Groq call failed, skipping: {exc}", file=sys.stderr)
+        print("tier8: Groq call failed, skipping", file=sys.stderr)
         return []
 
     if metrics is not None:

@@ -67,9 +67,9 @@ def judge_screenshot(
             # A per-day quota (as opposed to a per-minute rate limit) won't recover within
             # this run — retrying just burns the run's time budget for nothing.
             if "PerDay" in str(exc):
-                print(f"tier7: Gemini daily quota exhausted, skipping: {exc}", file=sys.stderr)
+                print("tier7: Gemini daily quota exhausted, skipping", file=sys.stderr)
                 break
-            print(f"tier7: Gemini call failed (attempt {attempt + 1}/{_MAX_RETRIES}): {exc}", file=sys.stderr)
+            print(f"tier7: Gemini call failed (attempt {attempt + 1}/{_MAX_RETRIES})", file=sys.stderr)
             time.sleep(2**attempt)
 
     if not succeeded:

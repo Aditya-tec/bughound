@@ -331,11 +331,14 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          JOB_ID: ${{ github.event.client_payload.job_id }}
+          TARGET_URL: ${{ github.event.client_payload.target_url }}
+          SCAN_MODE: ${{ github.event.client_payload.mode }}
         run: |
           python agent/main.py \
-            --job-id "${{ github.event.client_payload.job_id }}" \
-            --target-url "${{ github.event.client_payload.target_url }}" \
-            --mode "${{ github.event.client_payload.mode }}"
+            --job-id "$JOB_ID" \
+            --target-url "$TARGET_URL" \
+            --mode "$SCAN_MODE"
 ```
 
 ---

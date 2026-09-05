@@ -5,21 +5,25 @@ never share imports."""
 import requests
 
 GITHUB_API = "https://api.github.com"
+MAX_ISSUE_TEXT = 2000
+
+
+def _plain_text(value: str | None) -> str:
+    text = (value or "").replace("\r", " ").replace("\n", " ")[:MAX_ISSUE_TEXT]
+    return text.translate(str.maketrans("", "", "`*_[]()#!>|~"))
 
 
 def _issue_body(finding: dict) -> str:
     lines = [
-        finding.get("description") or "",
+        _plain_text(finding.get("description")),
         "",
-        f"**Page:** {finding['page_url']}",
-        f"**Tier:** {finding['tier']} ({finding['category']})",
-        f"**Severity:** {finding['severity']}",
+        f"Page: {_plain_text(finding['page_url'])}",
+        f"Tier: {finding['tier']} ({_plain_text(finding['category'])})",
+        f"Severity: {_plain_text(finding['severity'])}",
     ]
     if finding.get("repro_steps"):
-        lines += ["", "**Repro steps:**", finding["repro_steps"]]
-    if finding.get("screenshot_url"):
-        lines += ["", f"![screenshot]({finding['screenshot_url']})"]
-    lines += ["", "_Filed via BugHound._"]
+        lines += ["", "Repro steps:", _plain_text(finding["repro_steps"])]
+    lines += ["", "Filed via BugHound."]
     return "\n".join(lines)
 
 
@@ -31,7 +35,7 @@ def file_issue(token: str, owner: str, repo: str, finding: dict) -> str:
             "Accept": "application/vnd.github+json",
         },
         json={
-            "title": f"[BugHound][Tier {finding['tier']}] {finding['title']}",
+            "title": _plain_text(f"[BugHound][Tier {finding['tier']}] {finding['title']}"),
             "body": _issue_body(finding),
             "labels": ["bughound", finding["category"], finding["severity"]],
         },

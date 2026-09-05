@@ -4,7 +4,6 @@ import argparse
 import os
 import sys
 import time
-import traceback
 
 from playwright.sync_api import sync_playwright
 
@@ -74,8 +73,8 @@ def file_issues_for_findings(job_id: str, findings_with_ids: list[tuple[str, Fin
             supabase.table("findings").update(
                 {"filed_as_issue": True, "issue_url": issue_url}
             ).eq("id", finding_id).execute()
-        except Exception:
-            traceback.print_exc()
+        except Exception as exc:
+            print(f"issue filing failed: {type(exc).__name__}", file=sys.stderr)
 
 
 def main() -> int:
@@ -158,9 +157,9 @@ def main() -> int:
     except RunTimedOut as exc:
         status = "failed"
         print(f"Run timed out: {exc}", file=sys.stderr)
-    except Exception:
+    except Exception as exc:
         status = "failed"
-        traceback.print_exc()
+        print(f"scan failed: {type(exc).__name__}", file=sys.stderr)
     finally:
         duration = int(time.time() - started_at)
         update_job(

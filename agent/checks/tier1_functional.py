@@ -12,6 +12,31 @@ BROKEN_STATUS_THRESHOLD = 400
 # Non-standard status codes that specific platforms use to signal "we blocked this as bot
 # traffic" rather than "this resource doesn't exist." Unambiguous enough to skip entirely.
 KNOWN_BOT_BLOCK_STATUSES = {999}  # LinkedIn
+MAX_REDIRECTS = 5
+
+
+def _request_status(link: str, method: str, timeout: int) -> int:
+    url = link
+    for _ in range(MAX_REDIRECTS + 1):
+        response = requests.request(
+            method,
+            url,
+            headers={"User-Agent": USER_AGENT},
+            timeout=timeout,
+            allow_redirects=False,
+            stream=True,
+        )
+        try:
+            if response.is_redirect:
+                location = response.headers.get("location")
+                if not location:
+                    return response.status_code
+                url = requests.compat.urljoin(url, location)
+                continue
+            return response.status_code
+        finally:
+            response.close()
+    raise requests.TooManyRedirects(f"Redirect limit exceeded ({MAX_REDIRECTS})")
 
 
 def check_console_and_network(load_result: PageLoadResult) -> list[Finding]:
@@ -70,8 +95,7 @@ def _resolve_link_status(link: str) -> tuple[int | None, str | None]:
     following the link always sends GET, so that's the more accurate signal.
     """
     try:
-        resp = requests.head(link, headers={"User-Agent": USER_AGENT}, timeout=5, allow_redirects=True)
-        status = resp.status_code
+        status = _request_status(link, "HEAD", 5)
     except requests.RequestException as exc:
         return None, str(exc)
 
@@ -79,11 +103,7 @@ def _resolve_link_status(link: str) -> tuple[int | None, str | None]:
         return status, None
 
     try:
-        resp = requests.get(
-            link, headers={"User-Agent": USER_AGENT}, timeout=8, allow_redirects=True, stream=True
-        )
-        resp.close()
-        return resp.status_code, None
+        return _request_status(link, "GET", 8), None
     except requests.RequestException as exc:
         return None, str(exc)
 

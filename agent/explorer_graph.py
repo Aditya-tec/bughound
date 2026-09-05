@@ -107,7 +107,7 @@ def plan_actions(state: ExplorerState) -> ExplorerState:
         )
     except Exception as exc:
         # A Groq failure here must not crash the whole run -- just stop exploring.
-        print(f"plan_actions: Groq call failed, ending explore loop: {exc}", file=sys.stderr)
+        print("plan_actions: Groq call failed, ending explore loop", file=sys.stderr)
         return {**state, "planned_action": {"action": "none"}, "candidate_elements": candidates, "done": True}
 
     usage = getattr(response, "usage", None)

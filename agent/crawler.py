@@ -8,6 +8,8 @@ from playwright.sync_api import Page, ConsoleMessage, Response
 from guardrails import USER_AGENT, DomainAllowlist
 from security import is_public_hostname
 
+MAX_REDIRECTS = 5
+
 
 @dataclass
 class ConsoleEvent:
@@ -109,6 +111,14 @@ def install_ssrf_route_guard(page: Page) -> None:
     def handle_route(route) -> None:
         request = route.request
         if request.is_navigation_request() and request.frame == page.main_frame:
+            redirect_hops = 0
+            previous = request.redirected_from
+            while previous is not None:
+                redirect_hops += 1
+                previous = previous.redirected_from
+            if redirect_hops > MAX_REDIRECTS:
+                route.abort()
+                return
             hostname = urlparse(request.url).hostname or ""
             if not hostname or not is_public_hostname(hostname):
                 route.abort()

@@ -83,7 +83,7 @@ def main() -> int:
             job_id = create_job(args.api_base, target_url)
             job_data = poll_job(args.api_base, job_id)
         except Exception as exc:
-            print(f"  ERROR: {exc}")
+            print(f"  ERROR: {type(exc).__name__}")
             results.append({"path": fixture["path"], "tier": fixture["tier"], "error": str(exc)})
             continue
 
