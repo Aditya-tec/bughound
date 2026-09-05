@@ -13,8 +13,12 @@ export default function Tier2AccessibilityFixture() {
         This paragraph fails WCAG contrast requirements against its background.
       </p>
 
-      {/* Input with no associated label and no aria-label */}
-      <input name="unlabeled" placeholder="No label, no aria-label" />
+      {/* No label, no aria-label, and deliberately no placeholder either -- placeholder
+          text counts as a fallback accessible name per the accname spec, so axe-core
+          correctly does NOT flag a placeholder-only input. Confirmed with a real
+          axe-core run before removing it: this exact input passed axe's "label" rule
+          with a placeholder present, and failed it once removed. */}
+      <input name="unlabeled" />
 
       <p style={{ marginTop: "3rem", fontSize: "0.75rem", color: "#999" }}>
         BugHound eval fixture — intentionally broken for automated recall testing.

@@ -47,8 +47,14 @@ def file_issues(job_id: str, body: FileIssuesRequest, request: Request) -> dict:
                 detail="No connected GitHub App installation for this job. Connect GitHub first.",
             )
         installation = installation_result.data[0]
+        repo_full_name = installation.get("repo_full_name") or ""
+        if "/" not in repo_full_name:
+            raise HTTPException(
+                status_code=500,
+                detail="This installation is missing repo info. Reconnect GitHub and try again.",
+            )
         token = get_installation_token(installation["installation_id"])
-        owner, repo = installation["repo_full_name"].split("/", 1)
+        owner, repo = repo_full_name.split("/", 1)
 
     filed: list[dict] = []
     for finding_id in body.finding_ids:

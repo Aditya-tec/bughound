@@ -15,6 +15,11 @@ SLOW_RESPONSE_THRESHOLD_MS = 1500
 
 def measure_web_vitals(page: Page) -> dict:
     inject_script(page, WEB_VITALS_CDN_URL)
+    # web-vitals' callbacks only fire on finalization by default (visibility change or
+    # pagehide) -- neither happens during a single automated page load, so the callback
+    # would simply never fire and every LCP/CLS finding would silently go missing.
+    # reportAllChanges: true reports on every update instead, so whatever value has
+    # accumulated by the time our timeout fires is what we read.
     return page.evaluate(
         """
         () => new Promise((resolve) => {
@@ -26,8 +31,8 @@ def measure_web_vitals(page: Page) -> dict:
                     resolve(result);
                 }
             };
-            webVitals.onLCP((metric) => { result.lcp = metric.value; });
-            webVitals.onCLS((metric) => { result.cls = metric.value; });
+            webVitals.onLCP((metric) => { result.lcp = metric.value; }, { reportAllChanges: true });
+            webVitals.onCLS((metric) => { result.cls = metric.value; }, { reportAllChanges: true });
             setTimeout(finish, 2000);
         })
         """
