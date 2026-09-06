@@ -38,18 +38,18 @@ export default function ScanPage({ params }: { params: Promise<{ jobId: string }
 
   if (error) {
     return (
-      <main>
+      <div className="scan-page-shell"><main className="scan-page">
         <p style={{ color: "var(--danger)" }}>{error}</p>
-      </main>
+      </main></div>
     );
   }
 
   if (!data) {
     return (
-      <main>
+      <div className="scan-page-shell"><main className="scan-page">
         <div className="skeleton" style={{ height: 140, marginBottom: "1rem" }} />
         <div className="skeleton" style={{ height: 90 }} />
-      </main>
+      </main></div>
     );
   }
 
@@ -71,7 +71,7 @@ export default function ScanPage({ params }: { params: Promise<{ jobId: string }
       ];
 
   return (
-    <main>
+    <div className="scan-page-shell"><main className="scan-page">
       <div className="scan-heading">
         <div>
           <div className="eyebrow"><span className={live ? "live-dot" : "status-dot"} />{live ? "Scan in progress" : "Scan finished"}</div>
@@ -148,6 +148,6 @@ export default function ScanPage({ params }: { params: Promise<{ jobId: string }
           <a href={`/connect-github?jobId=${job.id}`} className="ghost-btn">Review GitHub handoff ↗</a>
         </section>
       )}
-    </main>
+    </main></div>
   );
 }
