@@ -75,8 +75,8 @@ export default function HomePage() {
 
           <p className="faint" style={{ marginTop: "1.4rem", fontSize: "0.8rem", lineHeight: 1.6 }}>
             <strong className="muted">Scan</strong> is read-only and never writes to your repo.{" "}
-            <strong className="muted">Owner</strong> auto-files GitHub issues via a personal
-            access token — use it only on sites you own.
+            <strong className="muted">Owner</strong> uses the connected owner repository to
+            auto-file GitHub issues — use it only on sites you own.
           </p>
         </form>
       </main>

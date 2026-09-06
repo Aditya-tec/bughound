@@ -90,6 +90,19 @@ export default function ReportPage({ params }: { params: Promise<{ jobId: string
         </div>
       )}
 
+      {job.mode === "owner" && (
+        <div className="panel owner-github-panel" style={{ marginBottom: "2rem" }}>
+          <div>
+            <div className="eyebrow"><span className="status-dot" /> GitHub connected · Owner mode</div>
+            <h2 style={{ fontSize: "1.25rem", marginTop: "0.35rem" }}>Issues are filed automatically.</h2>
+            <p className="muted" style={{ margin: "0.55rem 0 0", fontSize: "0.88rem" }}>
+              This run uses the configured owner repository. Findings are sent to GitHub as the agent verifies them, with duplicate filing protection.
+            </p>
+          </div>
+          <a href={`/connect-github?jobId=${job.id}`} className="btn">View GitHub connection ↗</a>
+        </div>
+      )}
+
       <hr className="divider" />
 
       <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Findings ({findings.length})</h2>

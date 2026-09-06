@@ -22,6 +22,7 @@ function ConnectGithubInner() {
   const connected = searchParams.get("connected") === "true";
 
   const [findings, setFindings] = useState<Finding[]>([]);
+  const [jobMode, setJobMode] = useState<"scan" | "owner" | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [filing, setFiling] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +32,10 @@ function ConnectGithubInner() {
   useEffect(() => {
     if (!jobId) return;
     getJobReport(jobId)
-      .then((data) => setFindings(data.findings))
+      .then((data) => {
+        setFindings(data.findings);
+        setJobMode(data.job.mode);
+      })
       .catch((err) => setError(err instanceof Error ? err.message : "Failed to load findings"));
   }, [jobId]);
 
@@ -78,6 +82,24 @@ function ConnectGithubInner() {
         <div className="eyebrow">Mode B+</div>
         <h1>Connect GitHub</h1>
         <p className="muted">Missing job id — open this page from a scan report.</p>
+      </main>
+    );
+  }
+
+  if (jobMode === "owner") {
+    return (
+      <main className="narrow">
+        <div className="eyebrow"><span className="status-dot" /> Owner mode · GitHub connected</div>
+        <h1>Automatic issue filing</h1>
+        <div className="panel" style={{ marginTop: "1.5rem" }}>
+          <p style={{ marginTop: 0 }}>
+            Owner mode is already connected to the configured GitHub repository. BugHound files verified findings automatically as part of the scan and skips anything already filed.
+          </p>
+          <p className="muted" style={{ fontSize: "0.85rem" }}>
+            This owner workflow does not need a second GitHub App installation. Use the report to review the findings and the issue links created by this run.
+          </p>
+          <a href={`/reports/${jobId}`} className="btn btn-primary" style={{ marginTop: "0.4rem" }}>Back to report ↗</a>
+        </div>
       </main>
     );
   }
