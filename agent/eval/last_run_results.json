@@ -1,12 +1,12 @@
 {
-  "overall_recall": 0.6470588235294118,
-  "planted_total": 17,
-  "planted_found": 11,
+  "overall_recall": 1.0,
+  "planted_total": 7,
+  "planted_found": 7,
   "fixtures": [
     {
       "path": "/eval/tier1-functional",
       "tier": 1,
-      "job_id": "40dafbe7-e327-47e5-bc65-2aa6a49e8058",
+      "job_id": "26799a32-bbc6-44b4-bf32-779fe155f646",
       "status": "completed",
       "planted_bugs": [
         {
@@ -32,16 +32,16 @@
       ],
       "extra_findings": [
         {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
+        },
+        {
           "tier": 1,
           "title": "Uncaught console error"
         },
         {
           "tier": 1,
           "title": "GET https://bughound-web.vercel.app/eval/does-not-exist.png returned 404"
-        },
-        {
-          "tier": 1,
-          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
         },
         {
           "tier": 2,
@@ -84,16 +84,8 @@
           "title": "region: All page content should be contained by landmarks"
         },
         {
-          "tier": 7,
-          "title": "Broken Image Displayed"
-        },
-        {
-          "tier": 7,
-          "title": "Dead-End Internal Link"
-        },
-        {
-          "tier": 7,
-          "title": "Missing Client-Side Validation Feedback for Required Field"
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
         },
         {
           "tier": 2,
@@ -112,20 +104,12 @@
           "title": "region: All page content should be contained by landmarks"
         },
         {
-          "tier": 7,
-          "title": "Ambiguous Timeframe in Top Banner"
-        },
-        {
           "tier": 2,
           "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
         },
         {
           "tier": 2,
           "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Missing URL Input Field for 'Run A Scan' Functionality"
         },
         {
           "tier": 2,
@@ -144,14 +128,6 @@
           "title": "region: All page content should be contained by landmarks"
         },
         {
-          "tier": 7,
-          "title": "Top Banner Text Truncation"
-        },
-        {
-          "tier": 7,
-          "title": "Ambiguous 'OWNER' Mode Interaction"
-        },
-        {
           "tier": 2,
           "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
         },
@@ -160,39 +136,15 @@
           "title": "region: All page content should be contained by landmarks"
         },
         {
-          "tier": 7,
-          "title": "Ambiguous 'SCAN' Button / Toggle and Duplicate Submission Actions"
-        },
-        {
-          "tier": 7,
-          "title": "Unclear Phrasing in Disclaimer Regarding 'Owner'"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Misleading placeholder in URL input field"
-        },
-        {
-          "tier": 7,
-          "title": "Ambiguous or duplicate call-to-action buttons for URL submission"
-        },
-        {
-          "tier": 7,
-          "title": "Incomplete or missing UI element next to 'SCAN' button"
+          "tier": 8,
+          "title": "Form submission on tier1-functional page does not change state"
         }
       ]
     },
     {
       "path": "/eval/tier2-accessibility",
       "tier": 2,
-      "job_id": "8c358baf-d0d6-47a3-9259-297a90eb774c",
+      "job_id": "f07968d1-0088-47b2-81b6-dc5a83866446",
       "status": "completed",
       "planted_bugs": [
         {
@@ -213,8 +165,8 @@
       ],
       "extra_findings": [
         {
-          "tier": 1,
-          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
+          "tier": 4,
+          "title": "Missing or broken sitemap.xml"
         },
         {
           "tier": 2,
@@ -231,10 +183,6 @@
         {
           "tier": 4,
           "title": "Missing or broken robots.txt"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken sitemap.xml"
         },
         {
           "tier": 6,
@@ -261,16 +209,20 @@
           "title": "region: All page content should be contained by landmarks"
         },
         {
-          "tier": 7,
-          "title": "WCAG Contrast Failure: Unreadable Text"
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
         },
         {
-          "tier": 7,
-          "title": "Dead-End Interaction: Unusable Input Field"
+          "tier": 2,
+          "title": "image-alt: Images must have alternative text"
         },
         {
-          "tier": 7,
-          "title": "Leftover Internal Testing Content on Live Page"
+          "tier": 2,
+          "title": "label: Form elements must have labels"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
         },
         {
           "tier": 2,
@@ -289,80 +241,12 @@
           "title": "region: All page content should be contained by landmarks"
         },
         {
-          "tier": 7,
-          "title": "Low contrast for informational text in top banner"
-        },
-        {
-          "tier": 7,
-          "title": "Low contrast on 'STAR ON GITHUB' button in top banner"
-        },
-        {
-          "tier": 7,
-          "title": "Critical accessibility failure: Main content paragraph is unreadable due to extremely low contrast"
-        },
-        {
-          "tier": 7,
-          "title": "Unlabeled input field in main content area"
-        },
-        {
           "tier": 2,
           "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
         },
         {
           "tier": 2,
-          "title": "image-alt: Images must have alternative text"
-        },
-        {
-          "tier": 2,
-          "title": "label: Form elements must have labels"
-        },
-        {
-          "tier": 2,
           "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Insufficient Color Contrast for Text Content"
-        },
-        {
-          "tier": 7,
-          "title": "Input Field Missing Label and Context"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "image-alt: Images must have alternative text"
-        },
-        {
-          "tier": 2,
-          "title": "label: Form elements must have labels"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Top banner text truncated"
-        },
-        {
-          "tier": 7,
-          "title": "Insufficient contrast for text"
-        },
-        {
-          "tier": 7,
-          "title": "Unlabeled input field"
-        },
-        {
-          "tier": 7,
-          "title": "Internal diagnostic text exposed"
-        },
-        {
-          "tier": 7,
-          "title": "Close button too close to CTA"
         },
         {
           "tier": 2,
@@ -373,8 +257,12 @@
           "title": "region: All page content should be contained by landmarks"
         },
         {
-          "tier": 7,
-          "title": "Misleading Call-to-Action Buttons with Question Marks"
+          "tier": 2,
+          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
+        },
+        {
+          "tier": 2,
+          "title": "region: All page content should be contained by landmarks"
         },
         {
           "tier": 2,
@@ -385,806 +273,44 @@
           "title": "region: All page content should be contained by landmarks"
         },
         {
-          "tier": 7,
-          "title": "Top banner text and controls are cramped"
-        },
-        {
-          "tier": 7,
-          "title": "Ambiguous behavior when submitting placeholder URL"
-        },
-        {
-          "tier": 7,
-          "title": "Lack of clear visual state for 'OWNER' toggle"
-        },
-        {
           "tier": 2,
           "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
         },
         {
           "tier": 2,
           "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Missing URL Input Field for 'Run a Scan' CTA"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Ambiguous Submit Button for URL Input"
         }
       ]
     },
     {
       "path": "/eval/tier3-performance",
       "tier": 3,
-      "job_id": "52249d4c-7d1d-4749-82ac-c398ae757daa",
-      "status": "completed",
-      "planted_bugs": [
-        {
-          "label": "LCP over threshold (~2.2s artificial server delay)",
-          "found": true,
-          "matched_title": "LCP is 3116ms (threshold 2500ms)"
-        }
-      ],
-      "extra_findings": [
-        {
-          "tier": 4,
-          "title": "Missing or broken robots.txt"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken sitemap.xml"
-        },
-        {
-          "tier": 6,
-          "title": "4 touch target(s) under 44px at mobile width"
-        },
-        {
-          "tier": 1,
-          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 4,
-          "title": "Missing canonical tag"
-        },
-        {
-          "tier": 4,
-          "title": "Incomplete Open Graph tags"
-        },
-        {
-          "tier": 6,
-          "title": "7 touch target(s) under 44px at tablet width"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Exposure of Internal Test Fixture Content"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Exposure of Internal Testing Page/Content"
-        },
-        {
-          "tier": 7,
-          "title": "Internal System Message in Top Banner"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Internal Test/Fixture Content Visible to Users"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Misleading Call-to-Action in Top Banner"
-        },
-        {
-          "tier": 7,
-          "title": "Misleading Call-to-Action in Header Navigation"
-        },
-        {
-          "tier": 7,
-          "title": "Inconsistent Placeholder in URL Submission Field"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Top banner text is truncated"
-        },
-        {
-          "tier": 7,
-          "title": "Input field placeholder requests email instead of URL"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 7,
-          "title": "Input Placeholder Contradicts Instructional Text"
-        },
-        {
-          "tier": 7,
-          "title": "Ambiguous Call-to-Action and Submit Workflow"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        }
-      ]
+      "error": "429 Client Error: Too Many Requests for url: https://bughound-api.vercel.app/api/jobs"
     },
     {
       "path": "/eval/tier4-seo",
       "tier": 4,
-      "job_id": "a5901815-002b-435f-a0b7-78f20cc091a4",
-      "status": "completed",
-      "planted_bugs": [
-        {
-          "label": "missing H1",
-          "found": true,
-          "matched_title": "Missing H1"
-        },
-        {
-          "label": "missing/broken sitemap.xml or robots.txt (site-wide gap)",
-          "found": true,
-          "matched_title": "Missing or broken robots.txt"
-        }
-      ],
-      "extra_findings": [
-        {
-          "tier": 1,
-          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "page-has-heading-one: Page should contain a level-one heading"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 4,
-          "title": "Missing canonical tag"
-        },
-        {
-          "tier": 4,
-          "title": "Incomplete Open Graph tags"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken sitemap.xml"
-        },
-        {
-          "tier": 6,
-          "title": "4 touch target(s) under 44px at mobile width"
-        },
-        {
-          "tier": 6,
-          "title": "7 touch target(s) under 44px at tablet width"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "page-has-heading-one: Page should contain a level-one heading"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "page-has-heading-one: Page should contain a level-one heading"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "page-has-heading-one: Page should contain a level-one heading"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 8,
-          "title": "External GitHub link does not navigate"
-        }
-      ]
+      "error": "429 Client Error: Too Many Requests for url: https://bughound-api.vercel.app/api/jobs"
     },
     {
       "path": "/eval/tier5-security",
       "tier": 5,
-      "job_id": "99f2d562-3774-4c56-9130-f8e73f76dffe",
-      "status": "completed",
-      "planted_bugs": [
-        {
-          "label": "missing Content-Security-Policy header (site-wide gap)",
-          "found": false
-        },
-        {
-          "label": "missing X-Frame-Options header (site-wide gap)",
-          "found": false
-        },
-        {
-          "label": "missing X-Content-Type-Options header (site-wide gap)",
-          "found": false
-        }
-      ],
-      "extra_findings": [
-        {
-          "tier": 1,
-          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 4,
-          "title": "Missing canonical tag"
-        },
-        {
-          "tier": 4,
-          "title": "Incomplete Open Graph tags"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken robots.txt"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken sitemap.xml"
-        },
-        {
-          "tier": 6,
-          "title": "4 touch target(s) under 44px at mobile width"
-        },
-        {
-          "tier": 6,
-          "title": "7 touch target(s) under 44px at tablet width"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 8,
-          "title": "External GitHub link does not navigate away"
-        }
-      ]
+      "error": "429 Client Error: Too Many Requests for url: https://bughound-api.vercel.app/api/jobs"
     },
     {
       "path": "/eval/tier6-responsive",
       "tier": 6,
-      "job_id": "f295d55f-9dcf-438c-bfc4-e40820373105",
-      "status": "completed",
-      "planted_bugs": [
-        {
-          "label": "touch target under 44px",
-          "found": true,
-          "matched_title": "5 touch target(s) under 44px at mobile width"
-        }
-      ],
-      "extra_findings": [
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 1,
-          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 4,
-          "title": "Missing canonical tag"
-        },
-        {
-          "tier": 4,
-          "title": "Incomplete Open Graph tags"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken robots.txt"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken sitemap.xml"
-        },
-        {
-          "tier": 6,
-          "title": "8 touch target(s) under 44px at tablet width"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        }
-      ]
+      "error": "429 Client Error: Too Many Requests for url: https://bughound-api.vercel.app/api/jobs"
     },
     {
       "path": "/eval/tier7-visual-ux",
       "tier": 7,
-      "job_id": "ef5db731-e260-4402-93cc-978fb0ce1933",
-      "status": "completed",
-      "planted_bugs": [
-        {
-          "label": "leftover placeholder content",
-          "found": false
-        },
-        {
-          "label": "misleading CTA",
-          "found": false
-        }
-      ],
-      "extra_findings": [
-        {
-          "tier": 1,
-          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 4,
-          "title": "Missing canonical tag"
-        },
-        {
-          "tier": 4,
-          "title": "Incomplete Open Graph tags"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken robots.txt"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken sitemap.xml"
-        },
-        {
-          "tier": 6,
-          "title": "4 touch target(s) under 44px at mobile width"
-        },
-        {
-          "tier": 6,
-          "title": "7 touch target(s) under 44px at tablet width"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 8,
-          "title": "BUY NOW CTA does not navigate to purchase flow"
-        },
-        {
-          "tier": 8,
-          "title": "External GitHub link (STAR ON GITHUB) fails to navigate"
-        }
-      ]
+      "error": "429 Client Error: Too Many Requests for url: https://bughound-api.vercel.app/api/jobs"
     },
     {
       "path": "/eval/tier8-flow",
       "tier": 8,
-      "job_id": "2af26744-d54d-4f91-9aa8-e144ffb0cfd0",
-      "status": "completed",
-      "planted_bugs": [
-        {
-          "label": "navigation link does not change URL or load new content",
-          "found": false
-        }
-      ],
-      "extra_findings": [
-        {
-          "tier": 1,
-          "title": "Broken link: https://github.com/Aditya-tec/bughound (404)"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 4,
-          "title": "Missing canonical tag"
-        },
-        {
-          "tier": 4,
-          "title": "Incomplete Open Graph tags"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken robots.txt"
-        },
-        {
-          "tier": 4,
-          "title": "Missing or broken sitemap.xml"
-        },
-        {
-          "tier": 6,
-          "title": "4 touch target(s) under 44px at mobile width"
-        },
-        {
-          "tier": 6,
-          "title": "7 touch target(s) under 44px at tablet width"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        },
-        {
-          "tier": 2,
-          "title": "color-contrast: Elements must meet minimum color contrast ratio thresholds"
-        },
-        {
-          "tier": 2,
-          "title": "region: All page content should be contained by landmarks"
-        }
-      ]
+      "error": "429 Client Error: Too Many Requests for url: https://bughound-api.vercel.app/api/jobs"
     }
   ]
 }

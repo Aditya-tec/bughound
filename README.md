@@ -1,248 +1,157 @@
-# BugHound
+<div align="center">
+  <img src="apps/web/public/logo-round-512.png" alt="BugHound" width="112" />
+  <h1>BugHound</h1>
+  <p><strong>An autonomous website QA agent that finds the bugs real users hit.</strong></p>
+  <p>
+    <a href="https://bughound-web.vercel.app">Try BugHound</a> ·
+    <a href="bughound-master-build-spec.md">Read the build spec</a> ·
+    <a href="https://github.com/Aditya-tec/bughound/issues">See real issues</a>
+  </p>
+</div>
 
-An autonomous agent that explores a live website the way a real user would — clicking,
-scrolling, filling forms — and reports real bugs across 8 categories: functional,
-accessibility, performance, SEO, security hygiene, responsive design, visual/UX, and
-multi-step flow consistency. On sites you own, it auto-files GitHub issues. On anyone
-else's, it produces a read-only, shareable report and never touches their repo.
+## Find bugs. Understand them. Ship the fix.
 
-**Live:** [bughound-web.vercel.app](https://bughound-web.vercel.app) · **Full build spec:** [bughound-master-build-spec.md](bughound-master-build-spec.md)
+BugHound explores a live website like a careful user: it opens pages, follows links, scrolls, interacts with controls, checks browser state, and records evidence. It then turns that exploration into findings your team can actually act on.
 
-## Found and fixed a critical RLS gap that let the public anon key bypass every server-side check
+The scan experience is deliberately visible. Watch the agent move through its pipeline, see what it has inspected, open the evidence behind each finding, and share the finished report with a link.
 
-This is the finding worth reading first. The frontend ships a public Supabase anon key —
-by design, Supabase expects that key to be public, protected entirely by Row Level
-Security policies on the tables it can touch. RLS was never enabled on this project's
-tables. That's not a theoretical gap: it was verified exploitable before it was fixed,
-not just inferred from a checklist.
-
-Using nothing but the anon key already sitting in the shipped client bundle, I inserted a
-real row into `jobs` and updated a real row in `findings` directly via Supabase's
-PostgREST API — no auth, no API call, completely bypassing the SSRF guard, the
-owner-mode domain allowlist, and the rate limiter, because none of those checks live in
-the database, only in the FastAPI layer in front of it. Every other security control in
-this project was moot for anyone willing to open dev tools and talk to Supabase directly.
-
-Fixed by enabling RLS with zero policies (default-deny for `anon`/`authenticated`) across
-all four tables, verified safe because the frontend never talks to Supabase directly —
-every real read/write already goes through the API's service-role key, which always
-bypasses RLS by design. Reverified after the fix with the identical attack: the same
-insert now returns `42501: new row violates row-level security policy` and the same
-update is a confirmed no-op. Full writeup, including the exact requests, in
-[bughound-master-build-spec.md](bughound-master-build-spec.md) §18.
-
-This exact bug — a public anon key with RLS off — ships in a large number of real
-production Supabase apps. It's the kind of gap that's invisible until someone actually
-tries the anon key against the tables instead of trusting that "the API handles it."
-
-## Why this exists
-
-Momentic and Octomind sell versions of this. This is the open-source, self-hostable,
-$0-forever version — no card required anywhere in the stack, because the expensive part
-(headless browser automation) runs on GitHub Actions' free compute for public repos, not
-on a paid always-on server. Vercel's serverless functions only orchestrate: create a job
-row, fire a dispatch event, read Supabase, call the GitHub API. LLM reasoning is split
-across two free tiers by workload — Groq for the frequent, cheap text-reasoning calls
-(page planning, flow-consistency judgment), Gemini only for the handful of calls per run
-that actually need vision (screenshot judgment).
-
-## The three modes
-
-| Mode | Who it's for | What happens |
-|---|---|---|
-| **Scan** | Anyone, on any URL | Fully read-only. Crawls and interacts with the page, produces a shareable report. Nothing is ever written anywhere. |
-| **Owner** | The operator, on their own domains | Auto-files every finding as a GitHub issue — no selection step. Locked server-side to an operator-configured domain allowlist; rejected outright for anything else. |
-| **Connect GitHub** (Mode B+) | A scan-mode report viewer who owns that site | Installs a narrowly-scoped GitHub App (`issues: write` only) on **their own** repo — they pick which one via GitHub's own install screen — then selectively files the findings they choose. BugHound never holds a credential to their account; GitHub's own consent screen is the trust boundary, not something built in-house. |
-
-## The 8 tiers
-
-1. **Functional** — uncaught JS exceptions, failed requests, broken links/images, forms that submit with empty required fields and no validation
-2. **Accessibility** — axe-core: missing alt text, insufficient contrast, unlabeled inputs, ARIA issues
-3. **Performance** — Core Web Vitals (LCP/CLS) via the `web-vitals` library, slow API responses
-4. **SEO** — missing/duplicate title & H1, missing canonical, broken Open Graph, missing sitemap.xml/robots.txt
-5. **Security hygiene** — passive only: missing CSP/X-Frame-Options/HSTS/X-Content-Type-Options, cookie flags, mixed content
-6. **Responsive** — missing viewport meta, horizontal overflow, sub-44px touch targets at 3 breakpoints
-7. **Visual/UX** — Gemini vision judgment: layout breakage, leftover placeholder content, misleading CTAs, dead-end navigation
-8. **Flow consistency** — LangGraph-tracked multi-step state across pages: broken checkout/signup flows, back-button state loss
-
-Tiers 1–6 are deterministic (free libraries, no LLM). Tier 7 uses Gemini vision. Tier 8
-uses Groq text reasoning over recorded page states — no screenshots.
-
-## Does it actually work? Proof, not claims
-
-- **Real issues, filed automatically**: a single owner-mode run against a live site
-  auto-filed 9 real GitHub issues on this repo with zero manual triage —
-  [issue #1](https://github.com/Aditya-tec/bughound/issues/1),
-  [#2](https://github.com/Aditya-tec/bughound/issues/2),
-  [#5](https://github.com/Aditya-tec/bughound/issues/5),
-  [#8](https://github.com/Aditya-tec/bughound/issues/8), and 5 more. They're live; click
-  through.
-- **Real findings on a real, unrelated project**: a scan-mode run against a second live
-  deployment (not a fixture, not this repo) surfaced 25 genuine findings across 5 tiers
-  in one pass — accessibility violations, missing SEO/security headers, sub-44px touch
-  targets, real vision-judged UX issues.
-- **A crawler crash, found by dogfooding against a third real project**: a scan against
-  another live deployment crashed the entire job — `Page.goto: Timeout 30000ms
-  exceeded` — because that site never satisfies Playwright's `networkidle` wait
-  condition (continuous polling/analytics keep the network busy indefinitely). Root
-  caused, fixed, and locked in with a regression test the same day it was found.
-- **An eval suite, not a vibe check**: `apps/web/app/eval/` hosts 8 deliberately-broken
-  fixture pages, one per tier, each with documented planted bugs
-  (`agent/eval/expected_findings.json`). `agent/eval/run_eval.py` scans all 8 for real
-  against the live deployment and scores recall against that ground truth — not a demo
-  video, an actual repeatable measurement. Latest run: see
-  [`agent/eval/last_run_results.json`](agent/eval/last_run_results.json) and §19 of the
-  build spec for the full breakdown, including the misses and which ones turned out to
-  be the eval's own bugs rather than the detector's.
-- **A real security pass beyond RLS**: an SSRF guard checked independently at job
-  creation and again right before the crawler connects, an owner-mode domain allowlist,
-  per-IP rate limiting on the public API with idempotent issue-filing, and a cross-job
-  data leak closed in the file-issues endpoint. Full writeup in §18 of the build spec.
-- **Went looking for CSRF protection on the GitHub App install flow, found the feature
-  was silently broken instead.** The install link set `?state=${jobId}`; GitHub echoes
-  that back as `state` on the callback redirect — but the callback handler's signature
-  expected a param literally named `job_id`, which GitHub never sends. Every real
-  installation would have linked to `null`, forever. Fixed the actual bug and added the
-  CSRF protection it needed anyway (a signed, 15-minute state token) in the same change
-  — verifying against actual behavior instead of just applying a described fix is what
-  surfaced this.
-- **Redirect-based SSRF, and the agent's own prompt-injection surface, closed
-  structurally, not by validating output.** Playwright follows HTTP redirects
-  transparently, so the entry-URL SSRF checks never saw a malicious mid-crawl 302 to an
-  internal IP — fixed with a route guard that re-validates every navigation hop, not
-  just the first. Separately, the explore loop used to hand the model a free-form
-  selector string to act on, built from page content it doesn't control — a page could
-  embed instructions-shaped text a human would never see but the model's context window
-  would. The fix isn't a smarter prompt: the model now picks only from a closed,
-  numbered index the agent's own code enumerated that same iteration, and any
-  index outside that set is ignored before it ever reaches `page.locator()`. Validating
-  the model's *choice* against a server-side allowlist, rather than trusting its
-  *output*, is the same shape as the SSRF fix — don't ask an untrusted actor to behave,
-  constrain what it's structurally able to do.
-
-## Architecture
-
-```
-Next.js dashboard (Vercel)
-   │ user submits target_url + picks mode
-   ▼
-FastAPI functions (Vercel, same free tier)
-   │ validates (SSRF, owner-mode allowlist, rate limit) → inserts a `jobs` row →
-   │ fires repository_dispatch
-   ▼
-GitHub Actions runner (free compute for public repos)
-   │ Playwright + LangGraph agent, Groq for text reasoning, Gemini for vision
-   │ crawls the target, runs all 8 tiers, records findings immediately (not batched,
-   │ so a timeout still leaves partial results)
-   ▼
-   ├─→ Supabase (jobs/findings/screenshots — dashboard polls this live)
-   └─→ mode=owner  → GitHub REST API (operator's PAT)         → issues filed automatically
-       mode=scan   → nothing filed, report renders from Supabase
-       Connect GitHub → GitHub App installation token, issues:write only → user-selected findings filed
+```text
+  crawl  ----->  interact  ----->  inspect  ----->  report
+    |                |                 |              |
+    +-- pages        +-- actions       +-- evidence    +-- share or file
 ```
 
-Two Vercel projects, not one — `bughound-web` (Next.js) and `bughound-api` (FastAPI,
-Python serverless) — because combining a Next.js frontend and a Python API in a single
-Vercel project runs into framework-detection conflicts; splitting them is the documented
-fallback and turned out simpler in practice.
+## What the agent checks
 
-## Repo layout
+BugHound runs eight focused checks instead of producing one vague score:
 
-```
-apps/web/       Next.js frontend (Vercel) — dashboard, live scan view, public reports,
-                 Connect GitHub flow, and apps/web/app/eval/ (the 8 eval fixtures)
-api/            FastAPI serverless functions (Vercel) — job orchestration, GitHub App
-                 auth, issue filing. Never runs an LLM call.
-agent/          Playwright + LangGraph agent — runs ONLY inside GitHub Actions.
-                 agent/checks/tier{1-8}_*.py, agent/eval/ (the eval runner)
-supabase/       schema.sql + migrations/ (run once each via the Supabase SQL Editor —
-                 no direct Postgres credentials are held anywhere in this stack, only
-                 the REST API, so DDL can't be scripted)
-.github/workflows/run_scan.yml   Triggered by repository_dispatch, never on a schedule
-```
+| Check | What it looks for |
+| --- | --- |
+| Functional | JavaScript errors, failed requests, broken links, broken images, and forms that fail silently |
+| Accessibility | Missing labels or alt text, contrast failures, ARIA problems, and keyboard issues |
+| Performance | Core Web Vitals, slow responses, render-blocking resources, and oversized images |
+| SEO | Titles, descriptions, H1s, canonical tags, Open Graph data, sitemaps, and robots.txt |
+| Security hygiene | Passive header and cookie configuration issues, mixed content, and exposed source maps |
+| Responsive | Mobile viewport metadata, horizontal overflow, small touch targets, and breakpoint breakage |
+| Visual / UX | Layout problems, dead ends, placeholder content, and misleading or broken states |
+| Multi-step flows | Checkout, signup, pagination, back-button, and state consistency across pages |
 
-## Honest comparison
+Every finding includes the page URL, severity, description, reproduction context, and the check that surfaced it. Open **How BugHound got here** to see the reasoning path instead of taking a black-box score on faith.
 
-|  | Momentic / Octomind | BugHound |
-|---|---|---|
-| Cost | Paid, credit card required | $0, no card anywhere in the stack |
-| Compute | Their infrastructure | GitHub Actions (free for public repos) |
-| Self-hostable | No | Yes — it's this repo |
-| Issue filing | Built-in integrations | Scoped GitHub App (Mode B+) or your own PAT (owner mode), never broader access than `issues: write` |
-| Novelty pitch | — | None claimed. This is "the open-source, $0 version of what they charge for," not a new idea. |
+## Three ways to use it
 
-## Tech stack
+### Scan mode
 
-| Layer | Tool |
-|---|---|
-| Frontend | Next.js on Vercel |
-| Backend API | FastAPI as Python serverless functions on Vercel |
-| Heavy compute | GitHub Actions (Playwright, LangGraph) |
-| Text reasoning | Groq |
-| Vision | Google Gemini |
-| Accessibility | axe-core via CDN injection + `page.evaluate` |
-| DB + storage | Supabase (Postgres + Storage), RLS-locked |
-| Issue filing | GitHub REST API — PAT (owner mode) or GitHub App installation token (Mode B+) |
+Submit any public URL. BugHound explores it in read-only mode and produces a shareable report. Nothing is written to the target site or to a repository.
 
-## Local dev
+### Owner mode
 
-**API:**
-```
-python -m venv .venv
-source .venv/Scripts/activate   # Windows Git Bash
-pip install -r api/requirements.txt uvicorn
-cp api/.env.example api/.env    # fill in SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
-cd api && uvicorn index:app --reload
-```
+For domains you operate, the agent can automatically file findings as GitHub issues. The server enforces an operator-owned domain allowlist before the run can start.
 
-**Agent** (needs Supabase/Groq/Gemini credentials):
-```
-python -m venv .venv-agent
-source .venv-agent/Scripts/activate
-pip install -r agent/requirements.txt
-playwright install --with-deps chromium
-cd agent && python main.py --job-id <uuid> --target-url https://example.com --mode scan
+### Connect GitHub
+
+Scan mode stays read-only by default. If you own the scanned site, connect GitHub from the report, choose the repository through GitHub's installation flow, review the findings, and explicitly file the ones you want. The GitHub App only requests the issue-writing permission it needs.
+
+## See it work
+
+The live scan view is built to make waiting useful rather than mysterious:
+
+- An animated progress rail shows crawl, interaction, inspection, and report stages.
+- A terminal-style agent trace shows the latest verified work from the run.
+- Findings arrive as the worker records them, so partial results survive an interrupted run.
+- Expandable evidence sections explain which tier found a problem and what was observed.
+- Completed runs offer both a shareable report and a direct GitHub handoff.
+
+The dashboard uses a warm editorial interface with a deliberately technical edge: serif findings for readability, monospace run data for precision, and motion only where it communicates live state.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A[Public URL] --> B[FastAPI validation]
+    B --> C[Supabase job]
+    C --> D[GitHub Actions]
+    D --> E[Playwright browser agent]
+    E --> F[8 QA checks]
+    F --> G[Live findings]
+    G --> H[Shareable report]
+    G --> I{Owner or consented repo?}
+    I -->|yes| J[GitHub issue]
+    I -->|no| H
 ```
 
-**Frontend:**
-```
+The frontend runs on Next.js and Vercel. Lightweight API functions validate and orchestrate jobs. The expensive browser work runs in GitHub Actions with Playwright, then writes job progress and findings to Supabase for the dashboard to poll.
+
+## Safety boundaries
+
+BugHound is designed to be useful without becoming destructive:
+
+- Public scans are read-only.
+- Security checks are passive; they inspect headers, cookies, and already-linked resources rather than probing systems.
+- The API validates targets against SSRF protections before the crawler connects and again before navigation hops.
+- Owner-mode issue filing is restricted to configured domains.
+- Scan-mode GitHub filing requires the site owner to install the GitHub App and confirm the repository and findings.
+- Supabase tables use default-deny Row Level Security; the browser never receives the service-role key.
+
+## Run it locally
+
+### Requirements
+
+- Node.js 20+
+- Python 3.11+
+- A Supabase project
+- GitHub credentials for dispatch and optional issue filing
+- Groq and Gemini API keys for the reasoning tiers
+
+### Frontend
+
+```powershell
 cd apps/web
 npm install
-cp .env.example .env.local
 npm run dev
 ```
 
-**Eval suite** (scans the live deployment for real, no local server needed):
+Open [http://localhost:3000](http://localhost:3000).
+
+### Agent
+
+```powershell
+python -m venv .venv
+.\\.venv\\Scripts\\Activate.ps1
+pip install -r agent/requirements.txt
+python -m agent.main
 ```
-python agent/eval/run_eval.py
+
+Copy the required environment variables from the deployment configuration into your local environment. The full API contract, schema, workflow, and deployment notes live in [bughound-master-build-spec.md](bughound-master-build-spec.md).
+
+## Project map
+
+```text
+apps/web/       Next.js dashboard, scan view, reports, and GitHub handoff
+api/            FastAPI serverless routes and auth/state boundaries
+agent/          Playwright crawler, exploration graph, checks, and issue filing
+supabase/       Schema and RLS migrations
+fixtures/       Deliberately broken evaluation sites
 ```
 
-## Deliberately accepted, not overlooked
+## Development checks
 
-`npm audit` flags 2 vulnerabilities (1 high) in `postcss`, pulled in transitively by
-Next.js — both are about processing attacker-controlled CSS content or
-`sourceMappingURL` comments. Checked before deciding to defer: `npm ls postcss` shows
-it's used only inside Next's own internal build pipeline, there's no `postcss.config.js`
-and no direct usage anywhere in this app's code, and it only ever processes this
-project's own static `globals.css` at build time — never user-supplied CSS or an
-attacker-controlled source-map path at runtime. Not reachable in this app's actual usage.
-The fix requires a Next 16 major-version upgrade, which is a bigger, less-understood risk
-to take on this late in the build than a confirmed-unreachable transitive advisory.
+```powershell
+cd apps/web
+npm run build
 
-## What's not finished yet
+cd ../..
+pytest agent/tests api/tests
+```
 
-Tracked honestly in the build spec rather than glossed over here:
-- Tiers 7/8's remaining eval misses are root-caused (Gemini's daily quota was being
-  exhausted by the 3rd fixture in an 8-fixture batch — fixed at the code level by
-  calling Gemini only on the first/last exploration pass instead of every iteration)
-  but not yet reverified with a clean live re-run, since fixing it used up the same
-  day's quota. §19 has the full story.
-- No technical writeup video (Loom) yet
-- CI now runs on every push (`.github/workflows/ci.yml`) but coverage is limited to the
-  pure-logic modules (SSRF guard, owner-mode allowlist, action budget, domain
-  allowlist, Gemini-call gating) — nothing exercises the FastAPI routes or the agent's
-  Playwright-driven checks themselves yet, since those need real browser/DB
-  infrastructure rather than unit-level mocks.
+## Technical reference
 
-See [bughound-master-build-spec.md](bughound-master-build-spec.md) §16 for the full,
-currently-accurate validation checklist.
+The detailed build spec covers the API contracts, database schema, deployment topology, crawler guardrails, GitHub authentication flow, evaluation suite, and security decisions. Start with [bughound-master-build-spec.md](bughound-master-build-spec.md) when you need implementation-level detail.
+
+## License
+
+See the repository license and contribution guidance before deploying BugHound against sites you do not own.
+
+<div align="center">
+  <sub>BugHound is for finding real problems before your users have to.</sub>
+</div>

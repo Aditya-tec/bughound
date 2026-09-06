@@ -43,6 +43,13 @@ export default function FindingsList({ findings }: { findings: Finding[] }) {
                 {finding.repro_steps}
               </p>
             )}
+            <details className="finding-details">
+              <summary>How BugHound got here <span>+</span></summary>
+              <div className="finding-method">
+                <div><span className="mono-label">Agent check</span><strong>{tier.label}</strong><p>{tier.description}</p></div>
+                <div><span className="mono-label">Evidence</span><strong>{finding.page_url}</strong><p>{finding.repro_steps ?? "The agent captured this result while exploring the page and comparing it with the check's expected behavior."}</p></div>
+              </div>
+            </details>
           </div>
         );
       })}

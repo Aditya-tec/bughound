@@ -646,6 +646,47 @@ button:disabled, .btn:disabled {
   animation: pulse 1.4s ease-in-out infinite;
 }
 
+/* Scan run surfaces */
+.scan-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+.scan-heading .eyebrow { margin-bottom: 0.35rem; }
+.scan-index { color: var(--smoke); font-size: 0.7rem; text-transform: uppercase; }
+.live-dot, .status-dot, .console-signal { width: 7px; height: 7px; border-radius: 50%; display: inline-block; background: var(--tier-3); }
+.live-dot, .console-signal { animation: pulse 1.2s ease-in-out infinite; }
+.status-dot { background: var(--tier-4); }
+.scan-progress { margin: 2rem 0 1rem; padding: 1.1rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.progress-head, .console-topline, .findings-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.progress-value { color: var(--lake-blue); }
+.progress-track { height: 7px; margin: 0.7rem 0 0.65rem; border-radius: 999px; background: rgba(36, 36, 36, 0.09); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--lake-blue), var(--tier-3)); transition: width 1s ease; position: relative; }
+.progress-fill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); animation: scan-shimmer 1.8s linear infinite; }
+@keyframes scan-shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+.pipeline-steps { display: flex; justify-content: space-between; color: var(--smoke); font-size: 0.68rem; text-transform: uppercase; }
+.pipeline-steps .is-done { color: var(--off-black); }
+.pipeline-steps .is-active { color: var(--lake-blue); }
+.agent-console { margin: 1.5rem 0 2.3rem; padding: 1rem 1.1rem; background: var(--off-black); color: var(--parchment); border-radius: var(--radius-card-sm); font-size: 0.78rem; box-shadow: var(--shadow-md); }
+.console-topline { color: var(--ash); text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.02em; }
+.console-topline > span:first-child { display: flex; align-items: center; gap: 0.45rem; color: var(--parchment); }
+.console-lines { margin: 1rem 0; display: grid; gap: 0.5rem; }
+.console-line { display: flex; gap: 0.6rem; align-items: baseline; animation: console-in 0.35s ease both; }
+.console-arrow { color: var(--mint); }
+.console-note { color: #aaa6a2; border-top: 1px solid rgba(255,255,255,.14); padding-top: 0.7rem; font-size: 0.7rem; }
+@keyframes console-in { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
+.scan-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; margin: 1rem 0 0; }
+.findings-heading { align-items: flex-end; margin-bottom: 1rem; }
+.findings-heading h2 { margin-top: 0.2rem; }
+.findings-help { font-size: 0.75rem; }
+.finding-details { border-top: 1px solid var(--border); margin-top: 1rem; padding-top: 0.75rem; }
+.finding-details summary { cursor: pointer; list-style: none; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; display: flex; justify-content: space-between; }
+.finding-details summary::-webkit-details-marker { display: none; }
+.finding-details summary span { color: var(--lake-blue); font-size: 1rem; }
+.finding-details[open] summary span { transform: rotate(45deg); }
+.finding-method { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 1rem; margin-top: 1rem; padding-top: 0.2rem; }
+.finding-method strong { display: block; font-family: var(--font-serif); font-size: 1rem; font-weight: 400; margin-top: 0.35rem; }
+.finding-method p { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+.next-step-panel { display: flex; justify-content: space-between; align-items: center; gap: 2rem; margin-top: 3rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-card-sm); background: var(--periwinkle-mist); }
+.next-step-panel h2 { font-size: 1.4rem; margin-top: 0.25rem; }
+.next-step-panel p { max-width: 58ch; margin: 0.6rem 0 0; font-size: 0.82rem; line-height: 1.5; }
+
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
@@ -1076,6 +1117,13 @@ hr.divider {
   .field-row .input, .field-row .segmented, .field-row button { width: 100%; }
   .cta-band { padding: 3rem 1.5rem; }
   section { padding: 3.5rem 1.25rem; }
+  .scan-heading { display: block; }
+  .scan-index { margin-top: 0.8rem; }
+  .pipeline-steps { gap: 0.5rem; font-size: 0.6rem; }
+  .findings-heading, .next-step-panel { display: block; }
+  .findings-help { display: block; margin-top: 0.6rem; }
+  .next-step-panel .ghost-btn { display: inline-flex; margin-top: 1rem; }
+  .finding-method { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 780px) {
