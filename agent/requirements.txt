@@ -1,5 +1,5 @@
 playwright==1.63.0
-langgraph==1.2.12
+langgraph==1.2.14
 groq==1.7.0
 google-genai==2.25.0
 requests==2.33.0
